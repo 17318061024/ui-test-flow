@@ -1,0 +1,50 @@
+{
+  "id" : "f78427c7-6258-41ca-8a58-8495f6ae75c6",
+  "name" : "新流程",
+  "description" : "",
+  "version" : 1,
+  "tags" : [ ],
+  "author" : null,
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "718b025c-57fd-4099-a0e0-91b5fef551f9",
+    "source" : "start",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : "2026-03-23T13:56:25.866Z",
+  "updatedAt" : "Mon Mar 23 22:03:04 CST 2026"
+}

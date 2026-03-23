@@ -1,0 +1,91 @@
+{
+  "id" : "94b20d80-f8fd-4f46-b1e5-61b1d0e6cca3",
+  "name" : "新流程",
+  "description" : "",
+  "version" : 1,
+  "tags" : [ ],
+  "author" : null,
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "1aac189f-f57b-41c8-8f7e-6eccc067a4eb",
+    "type" : "AIAction",
+    "label" : "AIAction",
+    "description" : null,
+    "position" : {
+      "x" : 229,
+      "y" : 153.00000762939453
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : {
+      "prompt" : "",
+      "timeout" : 30
+    },
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "8c55da77-6e72-4934-a620-6081ffd3bfde",
+    "type" : "Action",
+    "label" : "执行操作",
+    "description" : null,
+    "position" : {
+      "x" : 123,
+      "y" : 32.50000762939453
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "14294053-0fbe-471b-a3c1-4035d2a4ccb0",
+    "source" : "start",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : "2026-03-23T14:02:22.424Z",
+  "updatedAt" : "Mon Mar 23 22:02:42 CST 2026"
+}

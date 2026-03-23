@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, toRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { VueFlow, useVueFlow, Position, MarkerType } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -152,21 +152,39 @@ function onNodeClick(event: any) {
 // 处理画布点击（取消选择）
 function onPaneClick() {
   flowStore.selectNode(null)
+  flowStore.selectEdge(null)
 }
 
-// 处理边点击（删除边）
+// 处理边点击（选择边）
 function onEdgeClick(event: any) {
+  const edge = event.edge
+  const edgeId = edge.id
+
+  // 查找对应的边数据
+  const flowEdge = flowStore.currentFlow?.edges.find(e => e.id === edgeId)
+  if (flowEdge) {
+    flowStore.selectEdge(flowEdge)
+  }
+}
+
+// 处理边双击（删除边）
+async function onEdgeDoubleClick(event: any) {
   const edgeId = event.edge.id
   if (edgeId) {
     flowStore.deleteEdge(edgeId)
+    await flowStore.saveFlow()
   }
 }
 
 // 处理节点拖拽结束
 onNodeDragStop(({ node }) => {
+  // 检查节点是否存在于 store 中
   if (flowStore.currentFlow) {
-    // 使用 updateNode 保存位置
-    flowStore.updateNode(node.id, { position: node.position } as any)
+    const exists = flowStore.currentFlow.nodes.some(n => n.id === node.id)
+    if (exists) {
+      // 使用 updateNode 保存位置
+      flowStore.updateNode(node.id, { position: node.position } as any)
+    }
   }
 })
 
@@ -202,11 +220,43 @@ function handleBack() {
   router.push('/')
 }
 
+// 处理键盘删除
+async function handleKeyDown(event: KeyboardEvent) {
+  // 只处理 Delete 或 Backspace 键
+  if (event.key === 'Delete' || event.key === 'Backspace') {
+    // 如果焦点在输入框中，不处理
+    const target = event.target as HTMLElement
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      return
+    }
+
+    // 删除选中的边
+    if (flowStore.selectedEdge) {
+      flowStore.deleteEdge(flowStore.selectedEdge.id)
+      await flowStore.saveFlow()
+      return
+    }
+
+    // 删除选中的节点（不能删除 Start 节点）
+    if (flowStore.selectedNode) {
+      flowStore.deleteNode(flowStore.selectedNode.id)
+      await flowStore.saveFlow()
+    }
+  }
+}
+
 // 加载时初始化
 onMounted(() => {
   if (!route.params.id) {
     flowStore.createNewFlow()
   }
+  // 添加键盘事件监听
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+// 卸载时清理
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -253,6 +303,7 @@ onMounted(() => {
           @node-click="onNodeClick"
           @pane-click="onPaneClick"
           @edge-click="onEdgeClick"
+          @edge-dblclick="onEdgeDoubleClick"
         >
           <Background pattern-color="#aaa" :gap="16" />
           <Controls />

@@ -1,0 +1,73 @@
+{
+  "id" : "88958915-0ae1-44b7-8797-72fc3951dd8a",
+  "name" : "新流程",
+  "description" : "",
+  "version" : 1,
+  "tags" : [ ],
+  "author" : null,
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "50a28837-cfe6-4b74-85c4-8d7f6a0d885c",
+    "type" : "AIQuery",
+    "label" : "AIQuery",
+    "description" : null,
+    "position" : {
+      "x" : 444,
+      "y" : 384.00000762939453
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : {
+      "prompt" : "",
+      "schema" : "",
+      "as" : ""
+    },
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "53007bd2-d91b-4069-b026-1f9efb99a709",
+    "source" : "start",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : "2026-03-23T13:47:46.734Z",
+  "updatedAt" : "Mon Mar 23 21:47:46 CST 2026"
+}

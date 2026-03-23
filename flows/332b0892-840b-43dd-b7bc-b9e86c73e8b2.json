@@ -1,0 +1,33 @@
+{
+  "name": "Flow with Tags",
+  "description": "Test tags",
+  "version": 1,
+  "tags": [
+    "login",
+    "smoke",
+    "critical"
+  ],
+  "author": "Test Author",
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "Start",
+      "label": "开始"
+    },
+    {
+      "id": "end-1",
+      "type": "End",
+      "label": "结束"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "start-1",
+      "target": "end-1"
+    }
+  ],
+  "id": "332b0892-840b-43dd-b7bc-b9e86c73e8b2",
+  "createdAt": "2026-03-23T14:42:42.416Z",
+  "updatedAt": "2026-03-23T14:42:42.416Z"
+}

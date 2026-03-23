@@ -9,6 +9,7 @@ export const useFlowStore = defineStore('flow', () => {
   const flows = ref<FlowMeta[]>([])
   const currentFlow = ref<TestFlow | null>(null)
   const selectedNode = ref<FlowNode | null>(null)
+  const selectedEdge = ref<FlowEdge | null>(null)
   const isLoading = ref(false)
   const isSaving = ref(false)
   const error = ref<string | null>(null)
@@ -92,7 +93,7 @@ export const useFlowStore = defineStore('flow', () => {
       // 检查流程是否已存在（优先使用 flows 列表，否则通过 API 检查）
       let existing = flows.value.find(f => f.id === currentFlow.value?.id)
 
-      // 如果 flows 列表为空，尝试通过 API 获取来确认是否存在
+      // 如果 flows 列表为空或没找到，尝试通过 API 获取来确认是否存在
       if (!existing && flows.value.length === 0) {
         try {
           const flow = await api.getFlow(currentFlow.value.id)
@@ -102,11 +103,8 @@ export const useFlowStore = defineStore('flow', () => {
         }
       }
 
-      console.log('saveFlow - existing:', existing?.id, 'currentFlow.id:', currentFlow.value.id)
-      console.log('saveFlow - currentFlow:', JSON.stringify(currentFlow.value))
       if (existing) {
         const result = await api.updateFlow(currentFlow.value.id, currentFlow.value)
-        console.log('updateFlow result:', result)
         currentFlow.value = result
       } else {
         currentFlow.value.createdAt = now
@@ -141,6 +139,36 @@ export const useFlowStore = defineStore('flow', () => {
     }
   }
 
+  // 复制流程
+  async function duplicateFlow(id: string) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const duplicated = await api.duplicateFlow(id)
+      // 添加到列表
+      flows.value.unshift({
+        id: duplicated.id,
+        name: duplicated.name,
+        description: duplicated.description,
+        version: duplicated.version,
+        tags: duplicated.tags,
+        author: duplicated.author,
+        nodeCount: duplicated.nodes?.length || 0,
+        createdAt: duplicated.createdAt,
+        updatedAt: duplicated.updatedAt
+      })
+      ElMessage.success('复制成功')
+      return duplicated
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : '复制流程失败'
+      console.error('Failed to duplicate flow:', e)
+      ElMessage.error('复制失败')
+    } finally {
+      isLoading.value = false
+    }
+    return null
+  }
+
   // 添加节点
   function addNode(type: FlowNode['type'], position?: { x: number; y: number }) {
     if (!currentFlow.value) return
@@ -167,7 +195,9 @@ export const useFlowStore = defineStore('flow', () => {
       (newNode as any).position = position
     }
 
-    currentFlow.value.nodes.push(newNode)
+    // 添加新节点并重新赋值数组以触发响应式更新
+    const newNodes = [...currentFlow.value.nodes, newNode]
+    currentFlow.value.nodes = newNodes
     selectedNode.value = newNode
   }
 
@@ -175,17 +205,15 @@ export const useFlowStore = defineStore('flow', () => {
   function updateNode(nodeId: string, updates: Partial<FlowNode>) {
     if (!currentFlow.value) return
 
-    const index = currentFlow.value.nodes.findIndex(n => n.id === nodeId)
-    if (index !== -1) {
-      currentFlow.value.nodes[index] = {
-        ...currentFlow.value.nodes[index],
-        ...updates
-      }
+    const node = currentFlow.value.nodes.find(n => n.id === nodeId)
+    if (!node) return
 
-      // 更新选中节点
-      if (selectedNode.value?.id === nodeId) {
-        selectedNode.value = currentFlow.value.nodes[index]
-      }
+    // 只更新提供的属性，保留原有对象的引用
+    Object.assign(node, updates)
+
+    // 更新选中节点
+    if (selectedNode.value?.id === nodeId) {
+      selectedNode.value = node
     }
   }
 
@@ -193,14 +221,19 @@ export const useFlowStore = defineStore('flow', () => {
   function deleteNode(nodeId: string) {
     if (!currentFlow.value) return
 
-    // 不能删除 Start 和 End 节点
+    // 不能删除 Start 节点
     const node = currentFlow.value.nodes.find(n => n.id === nodeId)
-    if (node?.type === 'Start' || node?.type === 'End') return
+    if (node?.type === 'Start') return
 
-    currentFlow.value.nodes = currentFlow.value.nodes.filter(n => n.id !== nodeId)
-    currentFlow.value.edges = currentFlow.value.edges.filter(
+    // 过滤掉要删除的节点
+    const newNodes = currentFlow.value.nodes.filter(n => n.id !== nodeId)
+    currentFlow.value.nodes = newNodes
+
+    // 同样过滤边
+    const newEdges = currentFlow.value.edges.filter(
       e => e.source !== nodeId && e.target !== nodeId
     )
+    currentFlow.value.edges = newEdges
 
     if (selectedNode.value?.id === nodeId) {
       selectedNode.value = null
@@ -224,19 +257,18 @@ export const useFlowStore = defineStore('flow', () => {
       label
     }
 
-    currentFlow.value.edges.push(edge)
+    // 添加边并重新赋值数组以触发响应式更新
+    const newEdges = [...currentFlow.value.edges, edge]
+    currentFlow.value.edges = newEdges
   }
 
   // 更新边
   function updateEdge(edgeId: string, updates: Partial<FlowEdge>) {
     if (!currentFlow.value) return
 
-    const index = currentFlow.value.edges.findIndex(e => e.id === edgeId)
-    if (index !== -1) {
-      currentFlow.value.edges[index] = {
-        ...currentFlow.value.edges[index],
-        ...updates
-      }
+    const edge = currentFlow.value.edges.find(e => e.id === edgeId)
+    if (edge) {
+      Object.assign(edge, updates)
     }
   }
 
@@ -250,6 +282,19 @@ export const useFlowStore = defineStore('flow', () => {
   // 选择节点
   function selectNode(node: FlowNode | null) {
     selectedNode.value = node
+    // 选中节点时取消选择边
+    if (node) {
+      selectedEdge.value = null
+    }
+  }
+
+  // 选择边
+  function selectEdge(edge: FlowEdge | null) {
+    selectedEdge.value = edge
+    // 选中边时取消选择节点
+    if (edge) {
+      selectedNode.value = null
+    }
   }
 
   // 清空当前流程
@@ -284,6 +329,7 @@ export const useFlowStore = defineStore('flow', () => {
     flows,
     currentFlow,
     selectedNode,
+    selectedEdge,
     isLoading,
     isSaving,
     error,
@@ -297,6 +343,7 @@ export const useFlowStore = defineStore('flow', () => {
     createNewFlow,
     saveFlow,
     deleteFlow,
+    duplicateFlow,
     addNode,
     updateNode,
     deleteNode,
@@ -304,6 +351,7 @@ export const useFlowStore = defineStore('flow', () => {
     updateEdge,
     deleteEdge,
     selectNode,
+    selectEdge,
     clearCurrentFlow,
     setFlowName,
     setFlowDescription,

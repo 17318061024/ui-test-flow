@@ -1,0 +1,27 @@
+{
+  "name": "Version Test Flow",
+  "description": "Test version",
+  "version": 2,
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "Start",
+      "label": "开始"
+    },
+    {
+      "id": "end-1",
+      "type": "End",
+      "label": "结束"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "start-1",
+      "target": "end-1"
+    }
+  ],
+  "id": "b7345e49-c608-448d-9167-07eb6dbb4858",
+  "createdAt": "2026-03-23T14:42:42.426Z",
+  "updatedAt": "2026-03-23T14:42:42.431Z"
+}

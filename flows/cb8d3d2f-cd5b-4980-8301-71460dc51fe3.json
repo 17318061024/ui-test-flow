@@ -1,0 +1,42 @@
+{
+  "name": "Flow with Action Node",
+  "description": "Test action node",
+  "version": 1,
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "Start",
+      "label": "开始"
+    },
+    {
+      "id": "action-1",
+      "type": "Action",
+      "label": "点击按钮",
+      "action": {
+        "method": "click",
+        "target": "#submit",
+        "value": ""
+      }
+    },
+    {
+      "id": "end-1",
+      "type": "End",
+      "label": "结束"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "start-1",
+      "target": "action-1"
+    },
+    {
+      "id": "e2-3",
+      "source": "action-1",
+      "target": "end-1"
+    }
+  ],
+  "id": "cb8d3d2f-cd5b-4980-8301-71460dc51fe3",
+  "createdAt": "2026-03-23T14:42:42.372Z",
+  "updatedAt": "2026-03-23T14:42:42.372Z"
+}

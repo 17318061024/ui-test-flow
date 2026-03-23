@@ -33,7 +33,6 @@ export async function getFlow(id: string): Promise<TestFlow> {
 
 // 创建流程
 export async function createFlow(flow: Omit<TestFlow, 'id' | 'createdAt' | 'updatedAt'>): Promise<TestFlow> {
-  console.log('Creating flow:', JSON.stringify(flow))
   return request<TestFlow>('/flows', {
     method: 'POST',
     body: JSON.stringify(flow)
@@ -42,7 +41,6 @@ export async function createFlow(flow: Omit<TestFlow, 'id' | 'createdAt' | 'upda
 
 // 更新流程
 export async function updateFlow(id: string, flow: Partial<TestFlow>): Promise<TestFlow> {
-  console.log('Updating flow:', id, JSON.stringify(flow))
   return request<TestFlow>(`/flows/${id}`, {
     method: 'PUT',
     body: JSON.stringify(flow)

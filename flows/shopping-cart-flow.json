@@ -1,0 +1,288 @@
+{
+  "id" : "shopping-cart-flow",
+  "name" : "购物车结算流程",
+  "description" : "将商品加入购物车并完成结算",
+  "version" : 1,
+  "tags" : [ "购物", "结算" ],
+  "author" : "系统",
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : {
+      "x" : 100,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "navigate",
+    "type" : "Navigate",
+    "label" : "打开商品页",
+    "description" : null,
+    "position" : {
+      "x" : 250,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : {
+      "url" : "https://example.com/product/123",
+      "waitUntil" : "networkidle"
+    },
+    "assert" : null
+  }, {
+    "id" : "click_add_cart",
+    "type" : "Action",
+    "label" : "点击加入购物车",
+    "description" : null,
+    "position" : {
+      "x" : 400,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "click",
+      "target" : "加入购物车按钮",
+      "value" : null,
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "wait_dialog",
+    "type" : "Wait",
+    "label" : "等待弹窗",
+    "description" : null,
+    "position" : {
+      "x" : 550,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : {
+      "timeout" : 500,
+      "condition" : null
+    },
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "click_cart_icon",
+    "type" : "Action",
+    "label" : "打开购物车",
+    "description" : null,
+    "position" : {
+      "x" : 700,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "click",
+      "target" : "购物车图标",
+      "value" : null,
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "wait_cart",
+    "type" : "Wait",
+    "label" : "等待购物车打开",
+    "description" : null,
+    "position" : {
+      "x" : 850,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : {
+      "timeout" : 10,
+      "condition" : null
+    },
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "assert_item",
+    "type" : "Assert",
+    "label" : "验证商品在购物车",
+    "description" : null,
+    "position" : {
+      "x" : 1000,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : {
+      "type" : "visible",
+      "target" : "商品名称",
+      "expected" : null
+    }
+  }, {
+    "id" : "click_checkout",
+    "type" : "Action",
+    "label" : "点击结算按钮",
+    "description" : null,
+    "position" : {
+      "x" : 1150,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "click",
+      "target" : "结算按钮",
+      "value" : null,
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "assert_checkout",
+    "type" : "Assert",
+    "label" : "验证进入结算页",
+    "description" : null,
+    "position" : {
+      "x" : 1300,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : {
+      "type" : "text",
+      "target" : "页面标题",
+      "expected" : "确认订单"
+    }
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : {
+      "x" : 1450,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "e1",
+    "source" : "start",
+    "target" : "navigate",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e2",
+    "source" : "navigate",
+    "target" : "click_add_cart",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e3",
+    "source" : "click_add_cart",
+    "target" : "wait_dialog",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e4",
+    "source" : "wait_dialog",
+    "target" : "click_cart_icon",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e5",
+    "source" : "click_cart_icon",
+    "target" : "wait_cart",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e6",
+    "source" : "wait_cart",
+    "target" : "assert_item",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e7",
+    "source" : "assert_item",
+    "target" : "click_checkout",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e8",
+    "source" : "click_checkout",
+    "target" : "assert_checkout",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e9",
+    "source" : "assert_checkout",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : null,
+  "updatedAt" : "Mon Mar 23 21:45:34 CST 2026"
+}

@@ -9,7 +9,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'flow-list',
-      component: FlowListView
+      component: FlowListView,
+      meta: { keepAlive: true }
     },
     {
       path: '/designer',
@@ -24,7 +25,8 @@ const router = createRouter({
     {
       path: '/test-cases',
       name: 'test-cases',
-      component: TestCaseView
+      component: TestCaseView,
+      meta: { keepAlive: true }
     }
   ]
 })

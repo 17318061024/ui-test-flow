@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onActivated, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFlowStore } from '@/stores/flow'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -57,9 +57,8 @@ function generateCases(flowId: string) {
 }
 
 // 复制流程
-function duplicateFlow(flow: FlowMeta) {
-  // TODO: 实现复制功能
-  ElMessage.info('复制功能开发中')
+async function handleDuplicate(flow: FlowMeta) {
+  await flowStore.duplicateFlow(flow.id)
 }
 
 // 导出流程
@@ -78,8 +77,13 @@ function formatDate(dateStr?: string) {
   })
 }
 
-// 加载数据
+// 加载数据 - 每次进入页面都刷新
 onMounted(async () => {
+  await flowStore.fetchFlows()
+})
+
+// 每次返回列表页时都刷新
+onActivated(async () => {
   await flowStore.fetchFlows()
 })
 </script>
@@ -156,7 +160,7 @@ onMounted(async () => {
           <el-button size="small" type="success" @click="generateCases(flow.id)">
             生成用例
           </el-button>
-          <el-button size="small" @click="duplicateFlow(flow)">
+          <el-button size="small" @click="handleDuplicate(flow)">
             复制
           </el-button>
           <el-button size="small" type="danger" text @click="handleDelete(flow)">

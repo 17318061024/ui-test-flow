@@ -1,0 +1,42 @@
+{
+  "name": "Flow with Assert Node",
+  "description": "Test assert node",
+  "version": 1,
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "Start",
+      "label": "开始"
+    },
+    {
+      "id": "assert-1",
+      "type": "Assert",
+      "label": "验证结果",
+      "assert": {
+        "type": "equals",
+        "target": ".message",
+        "expected": "Success"
+      }
+    },
+    {
+      "id": "end-1",
+      "type": "End",
+      "label": "结束"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "start-1",
+      "target": "assert-1"
+    },
+    {
+      "id": "e2-3",
+      "source": "assert-1",
+      "target": "end-1"
+    }
+  ],
+  "id": "96232895-cea7-4b7e-bade-53465f7bc9f5",
+  "createdAt": "2026-03-23T14:42:42.386Z",
+  "updatedAt": "2026-03-23T14:42:42.386Z"
+}

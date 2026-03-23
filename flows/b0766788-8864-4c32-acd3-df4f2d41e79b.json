@@ -1,0 +1,72 @@
+{
+  "id" : "b0766788-8864-4c32-acd3-df4f2d41e79b",
+  "name" : "新流程",
+  "description" : "",
+  "version" : 1,
+  "tags" : [ ],
+  "author" : null,
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : null,
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "ef5a3e4c-d6b8-466a-9fe4-c513c496fea9",
+    "type" : "Wait",
+    "label" : "Wait",
+    "description" : null,
+    "position" : {
+      "x" : 397,
+      "y" : 130.00000762939453
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : {
+      "timeout" : 2,
+      "waitFor" : ""
+    },
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "f0828058-31ea-4666-9967-eb4e45354e65",
+    "source" : "start",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : "2026-03-23T13:53:10.191Z",
+  "updatedAt" : "Mon Mar 23 21:53:18 CST 2026"
+}

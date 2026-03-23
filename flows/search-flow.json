@@ -1,0 +1,230 @@
+{
+  "id" : "search-flow",
+  "name" : "商品搜索流程",
+  "description" : "搜索商品并验证搜索结果",
+  "version" : 1,
+  "tags" : [ "搜索", "商品" ],
+  "author" : "系统",
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : {
+      "x" : 100,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "navigate",
+    "type" : "Navigate",
+    "label" : "打开搜索页",
+    "description" : null,
+    "position" : {
+      "x" : 250,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : {
+      "url" : "https://example.com/search",
+      "waitUntil" : "load"
+    },
+    "assert" : null
+  }, {
+    "id" : "input_keyword",
+    "type" : "Action",
+    "label" : "输入搜索关键词",
+    "description" : null,
+    "position" : {
+      "x" : 400,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "input",
+      "target" : "搜索输入框",
+      "value" : "${keyword}",
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "click_search",
+    "type" : "Action",
+    "label" : "点击搜索按钮",
+    "description" : null,
+    "position" : {
+      "x" : 550,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "click",
+      "target" : "搜索按钮",
+      "value" : null,
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "wait_result",
+    "type" : "Wait",
+    "label" : "等待结果加载",
+    "description" : null,
+    "position" : {
+      "x" : 700,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : {
+      "timeout" : 1500,
+      "waitFor" : null
+    },
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "assert_result",
+    "type" : "Assert",
+    "label" : "验证有结果",
+    "description" : null,
+    "position" : {
+      "x" : 850,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : {
+      "type" : "visible",
+      "target" : "商品列表",
+      "expected" : null
+    }
+  }, {
+    "id" : "extract_count",
+    "type" : "Extract",
+    "label" : "提取结果数量",
+    "description" : null,
+    "position" : {
+      "x" : 1000,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : {
+      "target" : "结果数量",
+      "field" : "text",
+      "as" : "resultCount"
+    },
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : {
+      "x" : 1150,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "e1",
+    "source" : "start",
+    "target" : "navigate",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e2",
+    "source" : "navigate",
+    "target" : "input_keyword",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e3",
+    "source" : "input_keyword",
+    "target" : "click_search",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e4",
+    "source" : "click_search",
+    "target" : "wait_result",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e5",
+    "source" : "wait_result",
+    "target" : "assert_result",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e6",
+    "source" : "assert_result",
+    "target" : "extract_count",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e7",
+    "source" : "extract_count",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : null,
+  "updatedAt" : "Mon Mar 23 22:03:45 CST 2026"
+}

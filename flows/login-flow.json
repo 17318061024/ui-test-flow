@@ -1,0 +1,325 @@
+{
+  "id" : "login-flow",
+  "name" : "用户登录流程",
+  "description" : "验证用户登录功能，包括记住密码选项",
+  "version" : 1,
+  "tags" : [ "登录", "核心流程" ],
+  "author" : "系统",
+  "nodes" : [ {
+    "id" : "start",
+    "type" : "Start",
+    "label" : "开始",
+    "description" : null,
+    "position" : {
+      "x" : 100,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "navigate",
+    "type" : "Navigate",
+    "label" : "打开登录页",
+    "description" : null,
+    "position" : {
+      "x" : 280,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : {
+      "url" : "https://example.com/login",
+      "waitUntil" : "networkidle"
+    },
+    "assert" : null
+  }, {
+    "id" : "input_user",
+    "type" : "Action",
+    "label" : "输入用户名",
+    "description" : null,
+    "position" : {
+      "x" : 460,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "input",
+      "target" : "用户名输入框",
+      "value" : "${username}",
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "input_pwd",
+    "type" : "Action",
+    "label" : "输入密码",
+    "description" : null,
+    "position" : {
+      "x" : 640,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "input",
+      "target" : "密码输入框",
+      "value" : "${password}",
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "check_remember",
+    "type" : "Condition",
+    "label" : "是否记住密码",
+    "description" : null,
+    "position" : {
+      "x" : 820,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : {
+      "variable" : "rememberMe",
+      "operator" : "==",
+      "value" : "true"
+    },
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "click_remember",
+    "type" : "Action",
+    "label" : "勾选记住密码",
+    "description" : null,
+    "position" : {
+      "x" : 820,
+      "y" : 320
+    },
+    "action" : {
+      "method" : "click",
+      "target" : "记住密码复选框",
+      "value" : null,
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "click_login",
+    "type" : "Action",
+    "label" : "点击登录按钮",
+    "description" : null,
+    "position" : {
+      "x" : 1000,
+      "y" : 200
+    },
+    "action" : {
+      "method" : "click",
+      "target" : "登录按钮",
+      "value" : null,
+      "timeout" : null
+    },
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "wait_loading",
+    "type" : "Wait",
+    "label" : "等待页面加载",
+    "description" : null,
+    "position" : {
+      "x" : 1180,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : {
+      "timeout" : 2000,
+      "waitFor" : null
+    },
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "assert_success",
+    "type" : "Assert",
+    "label" : "验证登录成功",
+    "description" : null,
+    "position" : {
+      "x" : 1360,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : {
+      "type" : "text",
+      "target" : "成功提示",
+      "expected" : "欢迎"
+    }
+  }, {
+    "id" : "extract_user",
+    "type" : "Extract",
+    "label" : "提取用户名",
+    "description" : null,
+    "position" : {
+      "x" : 1540,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : {
+      "target" : "用户名显示",
+      "field" : "text",
+      "as" : "currentUser"
+    },
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  }, {
+    "id" : "end",
+    "type" : "End",
+    "label" : "结束",
+    "description" : null,
+    "position" : {
+      "x" : 1720,
+      "y" : 200
+    },
+    "action" : null,
+    "extract" : null,
+    "condition" : null,
+    "subFlow" : null,
+    "aiAction" : null,
+    "aiQuery" : null,
+    "aiAssert" : null,
+    "wait" : null,
+    "navigate" : null,
+    "assert" : null
+  } ],
+  "edges" : [ {
+    "id" : "e1",
+    "source" : "start",
+    "target" : "navigate",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e2",
+    "source" : "navigate",
+    "target" : "input_user",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e3",
+    "source" : "input_user",
+    "target" : "input_pwd",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e4",
+    "source" : "input_pwd",
+    "target" : "check_remember",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e5",
+    "source" : "check_remember",
+    "target" : "click_remember",
+    "label" : "是",
+    "condition" : null
+  }, {
+    "id" : "e6",
+    "source" : "check_remember",
+    "target" : "click_login",
+    "label" : "否",
+    "condition" : null
+  }, {
+    "id" : "e7",
+    "source" : "click_remember",
+    "target" : "click_login",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e8",
+    "source" : "click_login",
+    "target" : "wait_loading",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e9",
+    "source" : "wait_loading",
+    "target" : "assert_success",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e10",
+    "source" : "assert_success",
+    "target" : "extract_user",
+    "label" : null,
+    "condition" : null
+  }, {
+    "id" : "e11",
+    "source" : "extract_user",
+    "target" : "end",
+    "label" : null,
+    "condition" : null
+  } ],
+  "createdAt" : null,
+  "updatedAt" : "Mon Mar 23 22:03:26 CST 2026"
+}

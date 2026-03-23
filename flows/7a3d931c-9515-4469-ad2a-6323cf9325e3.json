@@ -1,0 +1,27 @@
+{
+  "name": "Duplicate Name Flow",
+  "description": "Test duplicate",
+  "version": 1,
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "Start",
+      "label": "开始"
+    },
+    {
+      "id": "end-1",
+      "type": "End",
+      "label": "结束"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "start-1",
+      "target": "end-1"
+    }
+  ],
+  "id": "7a3d931c-9515-4469-ad2a-6323cf9325e3",
+  "createdAt": "2026-03-23T14:42:42.432Z",
+  "updatedAt": "2026-03-23T14:42:42.432Z"
+}
