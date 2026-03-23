@@ -1,17 +1,38 @@
 /**
  * 节点类型定义
  * 所有节点都支持语义化描述，由 AI 解析执行
+ * 分为两类：
+ * 1. 语义化模式：通过 prompt 描述，AI 自动解析执行
+ * 2. 精细模式：手动配置具体的操作方法、目标元素等
  */
 export type NodeType =
+  // 流程控制
   | 'Start'        // 开始节点
   | 'End'          // 结束节点
+  // 页面操作
+  | 'Navigate'     // 页面导航节点
   | 'Action'       // 操作节点（点击、输入、选择等）
+  | 'Wait'         // 等待节点
+  // 验证与数据
   | 'Assert'       // 断言节点（验证）
   | 'Extract'      // 数据提取节点
+  // 流程逻辑
   | 'Condition'    // 条件分支节点
   | 'SubFlow'      // 子流程节点
-  | 'Wait'         // 等待节点
-  | 'Navigate'     // 页面导航节点
+
+/**
+ * 等待策略 - 页面加载完成的标准
+ */
+export type WaitUntil = 'load' | 'domcontentloaded' | 'networkidle' | 'commit'
+
+/**
+ * 变量引用 - 用于动态值
+ */
+export interface VariableRef {
+  name: string           // 变量名
+  type?: 'string' | 'number' | 'boolean' | 'object' | 'array'  // 变量类型
+  defaultValue?: any     // 默认值
+}
 
 /**
  * 操作类型 - 传统操作方法的类型定义（用于高级模式）
@@ -35,13 +56,32 @@ export type ActionMethod =
  * 断言类型 - 用于验证页面状态
  */
 export type AssertType =
-  | 'text'        // 元素包含指定文本
-  | 'visible'     // 元素可见
-  | 'hidden'      // 元素隐藏
-  | 'enabled'     // 元素可用
-  | 'disabled'    // 元素禁用
-  | 'contains'   // 文本包含
-  | 'notContains' // 文本不包含
+  | 'text'          // 元素包含指定文本（精确匹配）
+  | 'visible'       // 元素可见
+  | 'hidden'        // 元素隐藏
+  | 'enabled'       // 元素可用
+  | 'disabled'      // 元素禁用
+  | 'contains'      // 文本包含（模糊匹配）
+  | 'notContains'   // 文本不包含
+  | 'url'          // URL 匹配
+  | 'title'        // 页面标题匹配
+  | 'count'        // 元素数量匹配
+  | 'value'        // 输入框值匹配
+  | 'checked'       // 复选框/单选框选中状态
+  | 'notEmpty'     // 元素非空
+  | 'regex'        // 正则表达式匹配
+
+/**
+ * 断言配置扩展
+ */
+export interface AssertCondition {
+  type: AssertType
+  target?: string           // 目标元素描述
+  expected?: string        // 期望值
+  not?: boolean            // 取反
+  timeout?: number         // 超时时间（秒）
+  message?: string         // 自定义错误消息
+}
 
 /**
  * 条件操作符
@@ -71,11 +111,38 @@ export interface ActionConfig {
   target?: string       // 目标元素描述
   value?: string       // 操作值（输入文本、选择值等）
   isVariable?: boolean // value 是否为变量引用
+
+  // 选择操作选项
   selectBy?: SelectBy  // 选择方式
+  selectOptions?: string[]  // 多选选项列表
+
+  // 滚动选项
   scrollDirection?: ScrollDirection  // 滚动方向
   scrollAmount?: number // 滚动距离（像素）
+  scrollIntoView?: boolean  // 滚动到元素可见
+
+  // Frame 操作
   frameSelector?: string // Frame 选择器
+  frameIndex?: number   // Frame 索引
+
+  // 键盘操作
+  modifiers?: ('Alt' | 'Control' | 'Meta' | 'Shift')[]  // 修饰键
+  press?: string       // 按键（如：Enter, Escape, ArrowDown）
+
+  // 拖拽操作
+  dragTo?: string      // 拖拽到目标元素
+
+  // 上传操作
+  uploadFile?: string  // 上传文件路径
+  multiple?: boolean  // 是否多选文件
+
+  // 时间设置
   timeout?: number     // 超时时间（秒）
+  delay?: number      // 操作前延迟（毫秒）
+
+  // 强制选项
+  force?: boolean     // 强制执行（忽略可见性等）
+  noWaitAfter?: boolean  // 操作后不等待
 
   // 是否强制使用精细控制模式
   useManualMode?: boolean
@@ -93,7 +160,21 @@ export interface AssertConfig {
   type?: AssertType     // 断言类型
   target?: string       // 目标元素描述
   expected?: string    // 期望值
-  timeout?: number      // 超时时间（秒）
+  not?: boolean        // 取反
+  ignoreCase?: boolean  // 忽略大小写
+  timeout?: number     // 超时时间（秒）
+
+  // 多条件断言
+  conditions?: AssertCondition[]  // 多个断言条件
+
+  // 软断言（失败继续执行）
+  soft?: boolean       // 是否为软断言
+
+  // 截图验证
+  screenshot?: boolean // 是否截图保存
+
+  // 错误消息
+  message?: string     // 自定义错误消息
 
   // 是否强制使用精细控制模式
   useManualMode?: boolean
@@ -109,8 +190,26 @@ export interface ExtractConfig {
 
   // 精细控制模式（高级选项）
   target?: string       // 目标元素描述
-  field?: string        // 要提取的字段
+  field?: string        // 要提取的字段（innerText, value, href, src, attributeName 等）
   as?: string          // 保存为变量名
+
+  // 提取选项
+  multiple?: boolean    // 是否提取多个元素
+  index?: number       // 多个元素时的索引
+  regex?: string       // 正则表达式提取
+
+  // JSON 提取
+  jsonPath?: string    // JSON 路径（用于提取 JSON 数据）
+
+  // 页面级提取
+  pageTitle?: boolean   // 提取页面标题
+  pageUrl?: boolean    // 提取页面 URL
+  pageCookies?: boolean // 提取页面 Cookies
+  localStorage?: string // 提取 localStorage 项
+  sessionStorage?: string // 提取 sessionStorage 项
+
+  // 截图提取
+  screenshot?: boolean // 是否同时截图
 
   // 是否强制使用精细控制模式
   useManualMode?: boolean
@@ -128,6 +227,24 @@ export interface ConditionConfig {
   operator?: ConditionOperator // 操作符
   value?: string       // 比较值
 
+  // 多条件组合
+  conditions?: {
+    variable: string    // 变量名
+    operator: ConditionOperator  // 操作符
+    value: string      // 比较值
+    logic?: 'and' | 'or'  // 逻辑关系
+  }[]
+
+  // 页面状态条件
+  pageUrl?: string     // URL 匹配条件
+  pageTitle?: string   // 标题匹配条件
+  elementExists?: string  // 元素存在条件
+  elementVisible?: string // 元素可见条件
+
+  // 变量类型条件
+  variableExists?: string   // 变量存在
+  variableEmpty?: string    // 变量为空
+
   // 是否强制使用精细控制模式
   useManualMode?: boolean
 }
@@ -137,7 +254,11 @@ export interface ConditionConfig {
  */
 export interface SubFlowConfig {
   flowId: string                    // 子流程 ID
-  mapping?: Record<string, string>   // 参数映射
+  flowName?: string                 // 子流程名称（用于展示）
+  mapping?: Record<string, string>  // 输入参数映射：{ 子流程参数名: 当前流程变量名 }
+  outputMapping?: Record<string, string> // 输出参数映射：{ 当前流程变量名: 子流程返回值名 }
+  async?: boolean                   // 是否异步执行
+  timeout?: number                  // 超时时间（秒）
 }
 
 /**
@@ -149,9 +270,19 @@ export interface WaitConfig {
   prompt?: string        // 自然语言描述等待条件，如"等待页面加载完成"
 
   // 精细控制模式（高级选项）
-  waitType?: 'time' | 'element'  // 等待方式
+  waitType?: 'time' | 'element' | 'network' | 'function'  // 等待方式：时间、元素、网络请求、函数
   timeout?: number      // 等待时间（秒）
-  waitFor?: string     // 等待元素出现
+  waitFor?: string     // 等待元素出现（CSS 选择器或描述）
+  waitForVisible?: boolean  // 等待元素可见（默认 true）
+  waitForHidden?: boolean   // 等待元素隐藏
+  waitForEnabled?: boolean  // 等待元素可用
+
+  // 网络等待
+  waitForRequest?: string   // 等待特定请求
+  waitForResponse?: string  // 等待特定响应
+
+  // 函数等待
+  waitForFunction?: string  // JavaScript 表达式
 
   // 是否强制使用精细控制模式
   useManualMode?: boolean
@@ -168,8 +299,10 @@ export interface NavigateConfig {
   // 精细控制模式（高级选项）
   url?: string          // 目标 URL
   isVariable?: boolean // URL 是否为变量引用
-  waitUntil?: string    // 等待策略：load、domcontentloaded、networkidle
+  waitUntil?: WaitUntil // 等待策略：load、domcontentloaded、networkidle
   timeout?: number      // 超时时间（秒）
+  referer?: string     // Referer 头
+  headers?: Record<string, string> // 自定义请求头
 
   // 是否强制使用精细控制模式
   useManualMode?: boolean
@@ -269,4 +402,6 @@ export interface NodeConfig {
   extract?: ExtractConfig
   condition?: ConditionConfig
   subFlow?: SubFlowConfig
+  wait?: WaitConfig
+  navigate?: NavigateConfig
 }

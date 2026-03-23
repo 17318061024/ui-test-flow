@@ -1,0 +1,331 @@
+{
+  "id": "loop-execution-test-flow",
+  "name": "循环执行测试流程",
+  "description": "演示循环执行场景，使用变量控制循环次数、遍历数组、批量操作等，包含计数器变量、数组变量、状态变量的综合使用",
+  "version": 1,
+  "tags": ["循环", "变量控制", "批量操作", "计数器"],
+  "author": "UI Test Flow",
+  "nodes": [
+    {
+      "id": "node-1",
+      "type": "Start",
+      "label": "开始循环测试",
+      "position": { "x": 100, "y": 100 }
+    },
+    {
+      "id": "node-2",
+      "type": "Action",
+      "label": "初始化循环变量",
+      "position": { "x": 100, "y": 200 },
+      "action": {
+        "prompt": "初始化循环计数器 currentIndex 为 0，循环总数 maxCount 为 5",
+        "value": "0",
+        "isVariable": false,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-3",
+      "type": "Navigate",
+      "label": "打开商品列表页",
+      "position": { "x": 100, "y": 300 },
+      "navigate": {
+        "prompt": "打开电商网站的商品列表页面",
+        "url": "https://demo.example.com/products",
+        "timeout": 30
+      }
+    },
+    {
+      "id": "node-4",
+      "type": "Wait",
+      "label": "等待列表加载",
+      "position": { "x": 100, "y": 400 },
+      "wait": {
+        "prompt": "等待商品列表完全加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-5",
+      "type": "Extract",
+      "label": "提取商品名称数组",
+      "position": { "x": 100, "y": 500 },
+      "extract": {
+        "prompt": "提取所有商品的名称，保存为数组变量 productList",
+        "as": "productList"
+      }
+    },
+    {
+      "id": "node-6",
+      "type": "Extract",
+      "label": "提取商品价格数组",
+      "position": { "x": 100, "y": 600 },
+      "extract": {
+        "prompt": "提取所有商品的价格，保存为数组变量 priceList",
+        "as": "priceList"
+      }
+    },
+    {
+      "id": "node-7",
+      "type": "Extract",
+      "label": "获取列表总数",
+      "position": { "x": 100, "y": 700 },
+      "extract": {
+        "prompt": "获取商品列表的总数量，保存为变量 totalProducts",
+        "as": "totalProducts"
+      }
+    },
+    {
+      "id": "node-8",
+      "type": "Condition",
+      "label": "检查循环条件",
+      "position": { "x": 100, "y": 800 },
+      "condition": {
+        "prompt": "检查当前计数器 currentIndex 是否小于总商品数 totalProducts"
+      }
+    },
+    {
+      "id": "node-9",
+      "type": "Action",
+      "label": "获取当前商品",
+      "position": { "x": 50, "y": 920 },
+      "action": {
+        "prompt": "根据 currentIndex 从 productList 和 priceList 中获取当前商品信息",
+        "value": "$productList[$currentIndex]",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-10",
+      "type": "Action",
+      "label": "记录商品信息",
+      "position": { "x": 50, "y": 1040 },
+      "action": {
+        "prompt": "记录当前商品信息：商品名为 $productList[$currentIndex]，价格为 $priceList[$currentIndex]",
+        "value": "第$currentIndex+1个商品",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-11",
+      "type": "Action",
+      "label": "点击当前商品",
+      "position": { "x": 50, "y": 1160 },
+      "action": {
+        "prompt": "点击列表中第 $currentIndex+1 个商品的链接",
+        "value": "$currentIndex",
+        "isVariable": true,
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-12",
+      "type": "Wait",
+      "label": "等待详情页",
+      "position": { "x": 50, "y": 1280 },
+      "wait": {
+        "prompt": "等待商品详情页面加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-13",
+      "type": "Extract",
+      "label": "提取详情页信息",
+      "position": { "x": 50, "y": 1400 },
+      "extract": {
+        "prompt": "提取商品详情页的名称、价格、评分，保存为变量 detailProduct",
+        "as": "detailProduct"
+      }
+    },
+    {
+      "id": "node-14",
+      "type": "Assert",
+      "label": "验证商品信息",
+      "position": { "x": 50, "y": 1520 },
+      "assert": {
+        "prompt": "验证详情页商品名称与列表页一致：$productList[$currentIndex]",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-15",
+      "type": "Action",
+      "label": "记录成功项",
+      "position": { "x": 50, "y": 1640 },
+      "action": {
+        "prompt": "将验证成功的商品ID添加到已验证列表 verifiedItems",
+        "value": "$productList[$currentIndex]",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-16",
+      "type": "Navigate",
+      "label": "返回列表页",
+      "position": { "x": 50, "y": 1760 },
+      "navigate": {
+        "prompt": "返回商品列表页面继续循环",
+        "url": "https://demo.example.com/products",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-17",
+      "type": "Action",
+      "label": "递增计数器",
+      "position": { "x": 50, "y": 1880 },
+      "action": {
+        "prompt": "将 currentIndex 计数器加 1",
+        "value": "$currentIndex+1",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-18",
+      "type": "Action",
+      "label": "更新进度记录",
+      "position": { "x": 50, "y": 2000 },
+      "action": {
+        "prompt": "更新循环进度：已完成 $currentIndex / $totalProducts",
+        "value": "$currentIndex",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-19",
+      "type": "Condition",
+      "label": "检查是否终止",
+      "position": { "x": 200, "y": 800 },
+      "condition": {
+        "prompt": "检查是否达到最大循环次数 maxCount 或商品列表末尾"
+      }
+    },
+    {
+      "id": "node-20",
+      "type": "Action",
+      "label": "终止循环",
+      "position": { "x": 200, "y": 920 },
+      "action": {
+        "prompt": "记录循环终止原因，输出最终统计信息",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-21",
+      "type": "Action",
+      "label": "提取失败商品",
+      "position": { "x": 100, "y": 2120 },
+      "action": {
+        "prompt": "从 verifiedItems 中对比，提取未验证的商品ID到 failedItems",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-22",
+      "type": "Condition",
+      "label": "检查是否有失败",
+      "position": { "x": 100, "y": 2240 },
+      "condition": {
+        "prompt": "检查 failedItems 数组是否为空"
+      }
+    },
+    {
+      "id": "node-23",
+      "type": "Action",
+      "label": "记录测试摘要",
+      "position": { "x": 50, "y": 2360 },
+      "action": {
+        "prompt": "汇总测试结果：总商品数 $totalProducts，已验证数 $currentIndex，成功率计算",
+        "value": "$currentIndex/$totalProducts",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-24",
+      "type": "Action",
+      "label": "记录失败商品",
+      "position": { "x": 200, "y": 2360 },
+      "action": {
+        "prompt": "记录失败的商品列表变量 $failedItems 到日志",
+        "value": "失败商品: $failedItems",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-25",
+      "type": "Assert",
+      "label": "验证测试通过",
+      "position": { "x": 100, "y": 2480 },
+      "assert": {
+        "prompt": "验证已验证商品数量大于0，测试成功",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-26",
+      "type": "Action",
+      "label": "导出测试结果",
+      "position": { "x": 100, "y": 2600 },
+      "action": {
+        "prompt": "将完整的测试结果导出，包括 verifiedItems、failedItems、totalProducts、currentIndex",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-27",
+      "type": "Action",
+      "label": "截图保存",
+      "position": { "x": 100, "y": 2720 },
+      "action": {
+        "prompt": "截取最终测试结果页面",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-28",
+      "type": "End",
+      "label": "测试完成",
+      "position": { "x": 100, "y": 2840 }
+    }
+  ],
+  "edges": [
+    { "id": "edge-1", "source": "node-1", "target": "node-2" },
+    { "id": "edge-2", "source": "node-2", "target": "node-3" },
+    { "id": "edge-3", "source": "node-3", "target": "node-4" },
+    { "id": "edge-4", "source": "node-4", "target": "node-5" },
+    { "id": "edge-5", "source": "node-5", "target": "node-6" },
+    { "id": "edge-6", "source": "node-6", "target": "node-7" },
+    { "id": "edge-7", "source": "node-7", "target": "node-8" },
+    { "id": "edge-8", "source": "node-8", "target": "node-9", "label": "继续" },
+    { "id": "edge-9", "source": "node-8", "target": "node-19", "label": "终止" },
+    { "id": "edge-10", "source": "node-9", "target": "node-10" },
+    { "id": "edge-11", "source": "node-10", "target": "node-11" },
+    { "id": "edge-12", "source": "node-11", "target": "node-12" },
+    { "id": "edge-13", "source": "node-12", "target": "node-13" },
+    { "id": "edge-14", "source": "node-13", "target": "node-14" },
+    { "id": "edge-15", "source": "node-14", "target": "node-15" },
+    { "id": "edge-16", "source": "node-15", "target": "node-16" },
+    { "id": "edge-17", "source": "node-16", "target": "node-17" },
+    { "id": "edge-18", "source": "node-17", "target": "node-18" },
+    { "id": "edge-19", "source": "node-18", "target": "node-8" },
+    { "id": "edge-20", "source": "node-19", "target": "node-20", "label": "是" },
+    { "id": "edge-21", "source": "node-19", "target": "node-8", "label": "否" },
+    { "id": "edge-22", "source": "node-20", "target": "node-21" },
+    { "id": "edge-23", "source": "node-21", "target": "node-22" },
+    { "id": "edge-24", "source": "node-22", "target": "node-23", "label": "无失败" },
+    { "id": "edge-25", "source": "node-22", "target": "node-24", "label": "有失败" },
+    { "id": "edge-26", "source": "node-23", "target": "node-25" },
+    { "id": "edge-27", "source": "node-24", "target": "node-25" },
+    { "id": "edge-28", "source": "node-25", "target": "node-26" },
+    { "id": "edge-29", "source": "node-26", "target": "node-27" },
+    { "id": "edge-30", "source": "node-27", "target": "node-28" }
+  ]
+}

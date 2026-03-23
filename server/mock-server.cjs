@@ -231,54 +231,109 @@ app.post('/api/flows/:id/generate', (req, res) => {
     return res.status(404).json({ message: '流程不存在' });
   }
 
-  // 生成简单的测试用例
+  // 生成测试用例 - 将整个流程作为一个用例
   const testCases = [];
-  let stepId = 1;
+  const steps = [];
 
-  flow.nodes?.forEach(node => {
+  flow.nodes?.forEach((node, index) => {
+    let step = null;
+
     if (node.type === 'Start' || node.type === 'start') {
-      testCases.push({
-        id: `tc-${flow.id}-${stepId++}`,
-        name: `${flow.name} - ${node.label || '开始'}`,
-        flowId: flow.id,
-        testSteps: [
-          {
-            id: `step-${stepId}`,
-            action: 'navigate',
-            target: 'http://example.com',
-            value: ''
-          }
-        ]
-      });
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.label || '开始',
+        method: 'navigate',
+        target: '',
+        value: ''
+      };
+    } else if (node.type === 'Navigate' || node.type === 'navigate') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.label || '导航',
+        method: 'goto',
+        target: node.navigate?.url || node.navigate?.prompt || '',
+        value: node.navigate?.prompt || ''
+      };
     } else if (node.type === 'Action' || node.type === 'action') {
-      testCases.push({
-        id: `tc-${flow.id}-${stepId++}`,
-        name: `${flow.name} - ${node.label || '操作'}`,
-        flowId: flow.id,
-        testSteps: [
-          {
-            id: `step-${stepId}`,
-            action: 'click',
-            target: node.data?.target || '#submit-btn',
-            value: node.data?.value || ''
-          }
-        ]
-      });
+      // 语义化模式
+      if (node.action?.prompt) {
+        step = {
+          id: `step-${index + 1}`,
+          type: 'action',
+          description: node.action.prompt,
+          method: node.action.method || 'click',
+          target: node.action.target || '',
+          value: node.action.value || ''
+        };
+      } else {
+        step = {
+          id: `step-${index + 1}`,
+          type: 'action',
+          description: node.label || '操作',
+          method: node.action?.method || 'click',
+          target: node.action?.target || '',
+          value: node.action?.value || ''
+        };
+      }
     } else if (node.type === 'Assert' || node.type === 'assert') {
-      testCases.push({
-        id: `tc-${flow.id}-${stepId++}`,
-        name: `${flow.name} - ${node.label || '断言'}`,
-        flowId: flow.id,
-        testSteps: [
-          {
-            id: `step-${stepId}`,
-            action: 'assert',
-            target: node.data?.target || '',
-            value: node.data?.expected || ''
-          }
-        ]
-      });
+      step = {
+        id: `step-${index + 1}`,
+        type: 'assert',
+        description: node.assert?.prompt || node.label || '验证',
+        assertType: node.assert?.type || 'text',
+        target: node.assert?.target || '',
+        expected: node.assert?.expected || ''
+      };
+    } else if (node.type === 'Extract' || node.type === 'extract') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'extract',
+        description: node.extract?.prompt || node.label || '提取数据',
+        field: node.extract?.field || '',
+        as: node.extract?.as || ''
+      };
+    } else if (node.type === 'Wait' || node.type === 'wait') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'wait',
+        description: node.wait?.prompt || node.label || '等待',
+        timeout: node.wait?.timeout || 5
+      };
+    } else if (node.type === 'Condition' || node.type === 'condition') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.condition?.prompt || node.label || '条件判断',
+        target: node.condition?.variable || '',
+        value: node.condition?.value || ''
+      };
+    } else if (node.type === 'End' || node.type === 'end') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.label || '结束',
+        method: 'end',
+        target: '',
+        value: ''
+      };
     }
+
+    if (step) {
+      steps.push(step);
+    }
+  });
+
+  // 创建一个包含所有步骤的测试用例
+  testCases.push({
+    id: `tc-${flow.id}-1`,
+    name: flow.name || '测试用例',
+    description: flow.description || '',
+    flowId: flow.id,
+    tags: flow.tags || [],
+    steps: steps,
+    createdAt: new Date().toISOString()
   });
 
   // 保存测试用例
@@ -300,6 +355,13 @@ app.get('/api/test-cases', (req, res) => {
       if (file.startsWith('test-cases-') && file.endsWith('.json')) {
         const content = fs.readFileSync(path.join(TEST_CASES_DIR, file), 'utf-8');
         const cases = JSON.parse(content);
+        // 统一转换为 steps 字段
+        cases.forEach(tc => {
+          if (tc.testSteps && !tc.steps) {
+            tc.steps = tc.testSteps;
+            delete tc.testSteps;
+          }
+        });
         testCases.push(...cases);
       }
     });
@@ -319,46 +381,152 @@ app.get('/api/flows/:id/export-cases', (req, res) => {
 
   const format = req.query.format || 'json';
 
-  // 生成测试用例数据
-  const testCases = [];
-  let stepId = 1;
+  // 生成测试用例数据 - 使用与 generate 相同的逻辑
+  const steps = [];
 
-  flow.nodes?.forEach(node => {
+  flow.nodes?.forEach((node, index) => {
+    let step = null;
+
     if (node.type === 'Start' || node.type === 'start') {
-      testCases.push({
-        id: `tc-${flow.id}-${stepId}`,
-        name: `${flow.name} - ${node.label || '开始'}`,
-        flowId: flow.id,
-        testSteps: [
-          {
-            id: `step-${stepId}`,
-            action: 'navigate',
-            target: 'http://example.com',
-            value: ''
-          }
-        ]
-      });
-      stepId++;
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.label || '开始',
+        method: 'navigate',
+        target: '',
+        value: ''
+      };
+    } else if (node.type === 'Navigate' || node.type === 'navigate') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.label || '导航',
+        method: 'goto',
+        target: node.navigate?.url || node.navigate?.prompt || '',
+        value: node.navigate?.prompt || ''
+      };
+    } else if (node.type === 'Action' || node.type === 'action') {
+      if (node.action?.prompt) {
+        step = {
+          id: `step-${index + 1}`,
+          type: 'action',
+          description: node.action.prompt,
+          method: node.action.method || 'click',
+          target: node.action.target || '',
+          value: node.action.value || ''
+        };
+      } else {
+        step = {
+          id: `step-${index + 1}`,
+          type: 'action',
+          description: node.label || '操作',
+          method: node.action?.method || 'click',
+          target: node.action?.target || '',
+          value: node.action?.value || ''
+        };
+      }
+    } else if (node.type === 'Assert' || node.type === 'assert') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'assert',
+        description: node.assert?.prompt || node.label || '验证',
+        assertType: node.assert?.type || 'text',
+        target: node.assert?.target || '',
+        expected: node.assert?.expected || ''
+      };
+    } else if (node.type === 'Extract' || node.type === 'extract') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'extract',
+        description: node.extract?.prompt || node.label || '提取数据',
+        field: node.extract?.field || '',
+        as: node.extract?.as || ''
+      };
+    } else if (node.type === 'Wait' || node.type === 'wait') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'wait',
+        description: node.wait?.prompt || node.label || '等待',
+        timeout: node.wait?.timeout || 5
+      };
+    } else if (node.type === 'Condition' || node.type === 'condition') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.condition?.prompt || node.label || '条件判断',
+        target: node.condition?.variable || '',
+        value: node.condition?.value || ''
+      };
+    } else if (node.type === 'End' || node.type === 'end') {
+      step = {
+        id: `step-${index + 1}`,
+        type: 'action',
+        description: node.label || '结束',
+        method: 'end',
+        target: '',
+        value: ''
+      };
+    }
+
+    if (step) {
+      steps.push(step);
     }
   });
 
+  const testCase = {
+    id: `tc-${flow.id}-1`,
+    name: flow.name || '测试用例',
+    description: flow.description || '',
+    flowId: flow.id,
+    tags: flow.tags || [],
+    steps: steps,
+    createdAt: new Date().toISOString()
+  };
+
   if (format === 'yaml') {
     let yaml = 'testCases:\n';
-    testCases.forEach(tc => {
-      yaml += `  - id: ${tc.id}\n`;
-      yaml += `    name: ${tc.name}\n`;
-      yaml += `    testSteps:\n`;
-      tc.testSteps.forEach(step => {
-        yaml += `      - id: ${step.id}\n`;
-        yaml += `        action: ${step.action}\n`;
-        yaml += `        target: ${step.target}\n`;
-        yaml += `        value: ${step.value}\n`;
-      });
+    yaml += `  - id: ${testCase.id}\n`;
+    yaml += `    name: ${testCase.name}\n`;
+    yaml += `    description: ${testCase.description}\n`;
+    yaml += `    steps:\n`;
+    testCase.steps.forEach(step => {
+      yaml += `      - id: ${step.id}\n`;
+      yaml += `        type: ${step.type}\n`;
+      yaml += `        description: ${step.description}\n`;
+      if (step.method) yaml += `        method: ${step.method}\n`;
+      if (step.target) yaml += `        target: ${step.target}\n`;
+      if (step.value) yaml += `        value: ${step.value}\n`;
+      if (step.as) yaml += `        as: ${step.as}\n`;
+      if (step.timeout) yaml += `        timeout: ${step.timeout}\n`;
     });
     res.setHeader('Content-Type', 'text/yaml');
     res.send(yaml);
   } else if (format === 'json') {
-    res.json(testCases);
+    res.json([testCase]);
+  } else if (format === 'script') {
+    // 生成 Playwright 脚本
+    let script = `// Playwright Test Script - ${testCase.name}\n`;
+    script += `// Generated: ${testCase.createdAt}\n\n`;
+    script += `import { test, expect } from '@playwright/test';\n\n`;
+    script += `test('${testCase.name}', async ({ page }) => {\n`;
+    testCase.steps.forEach(step => {
+      if (step.type === 'action') {
+        if (step.method === 'goto' || step.method === 'navigate') {
+          script += `  await page.goto('${step.target || step.value}');\n`;
+        } else if (step.method === 'click') {
+          script += `  await page.click('${step.target || 'selector'}');\n`;
+        } else if (step.method === 'input') {
+          script += `  await page.fill('${step.target || 'selector'}', '${step.value}');\n`;
+        }
+      } else if (step.type === 'wait') {
+        script += `  await page.waitForTimeout(${step.timeout * 1000});\n`;
+      } else if (step.type === 'assert') {
+        script += `  // Assert: ${step.description}\n`;
+      }
+    });
+    script += `});\n`;
+    res.setHeader('Content-Type', 'text/javascript');
+    res.send(script);
   } else {
     res.status(400).json({ message: '不支持的格式' });
   }

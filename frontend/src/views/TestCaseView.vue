@@ -157,7 +157,7 @@ onMounted(() => {
             <span class="case-name">{{ testCase.name }}</span>
           </div>
           <div class="case-meta">
-            <span class="case-steps-count">{{ testCase.steps.length }} 步</span>
+            <span class="case-steps-count">{{ testCase.steps?.length || 0 }} 步</span>
           </div>
         </div>
 
@@ -170,7 +170,7 @@ onMounted(() => {
           <!-- 步骤列表 -->
           <div class="steps-list">
             <div
-              v-for="(step, index) in testCase.steps"
+              v-for="(step, index) in (testCase.steps || [])"
               :key="step.id"
               class="test-case-step"
             >
@@ -181,18 +181,33 @@ onMounted(() => {
                 <div class="step-type">{{ getStepTypeLabel(step.type) }}</div>
                 <div class="step-action">
                   <template v-if="step.type === 'action'">
-                    {{ step.method }}: {{ step.target }}
-                    <span v-if="step.value"> → {{ step.value }}</span>
+                    <template v-if="step.description">
+                      {{ step.description }}
+                      <template v-if="step.target"> [目标: {{ step.target }}]</template>
+                      <template v-if="step.value"> → 输入值: {{ step.value }}</template>
+                    </template>
+                    <template v-else>
+                      {{ step.method || '操作' }}: {{ step.target || '-' }}
+                      <span v-if="step.value"> → {{ step.value }}</span>
+                    </template>
                   </template>
                   <template v-else-if="step.type === 'assert'">
-                    {{ step.assertType }}: {{ step.target }}
-                    <span v-if="step.expected"> → 期望: {{ step.expected }}</span>
+                    <template v-if="step.description">{{ step.description }}</template>
+                    <template v-else>
+                      {{ step.assertType || '验证' }}: {{ step.target || '-' }}
+                      <span v-if="step.expected"> → 期望: {{ step.expected }}</span>
+                    </template>
                   </template>
                   <template v-else-if="step.type === 'extract'">
-                    从 {{ step.target }} 提取 {{ step.field }} → {{ step.as }}
+                    {{ step.description || '提取数据' }}
+                    <template v-if="step.target"> [目标: {{ step.target }}]</template>
+                    → 变量: {{ step.as || '-' }}
                   </template>
                   <template v-else-if="step.type === 'wait'">
-                    等待 {{ step.timeout }}ms
+                    {{ step.description || '等待' }} ({{ step.timeout || 0 }}秒)
+                  </template>
+                  <template v-else>
+                    {{ step.description || '未知步骤' }}
                   </template>
                 </div>
               </div>
@@ -205,6 +220,12 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.test-case-preview {
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
 .preview-header {
   display: flex;
   justify-content: space-between;

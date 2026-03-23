@@ -1,0 +1,366 @@
+{
+  "id": "ecommerce-checkout-flow",
+  "name": "电商完整购物流程",
+  "description": "从搜索商品到完成支付的完整购物流程，包含商品选择、购物车、结算、支付等环节",
+  "version": 1,
+  "tags": ["电商", "购物流程", "支付", "复杂场景"],
+  "author": "UI Test Flow",
+  "nodes": [
+    {
+      "id": "node-1",
+      "type": "Start",
+      "label": "开始",
+      "position": { "x": 100, "y": 100 }
+    },
+    {
+      "id": "node-2",
+      "type": "Navigate",
+      "label": "打开购物网站",
+      "position": { "x": 100, "y": 200 },
+      "navigate": {
+        "prompt": "打开淘宝或京东首页",
+        "timeout": 30
+      }
+    },
+    {
+      "id": "node-3",
+      "type": "Action",
+      "label": "搜索商品",
+      "position": { "x": 100, "y": 300 },
+      "action": {
+        "prompt": "在搜索框输入 iPhone 15 并点击搜索按钮",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-4",
+      "type": "Wait",
+      "label": "等待搜索结果",
+      "position": { "x": 100, "y": 400 },
+      "wait": {
+        "prompt": "等待搜索结果页面加载完成",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-5",
+      "type": "Extract",
+      "label": "提取商品列表",
+      "position": { "x": 100, "y": 500 },
+      "extract": {
+        "prompt": "提取搜索结果中前5个商品的名称和价格",
+        "as": "productList"
+      }
+    },
+    {
+      "id": "node-6",
+      "type": "Action",
+      "label": "点击第一个商品",
+      "position": { "x": 100, "y": 600 },
+      "action": {
+        "prompt": "点击搜索结果中第一个商品的图片或标题进入详情页",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-7",
+      "type": "Wait",
+      "label": "等待商品详情加载",
+      "position": { "x": 100, "y": 700 },
+      "wait": {
+        "prompt": "等待商品详情页面完全加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-8",
+      "type": "Assert",
+      "label": "验证商品详情页",
+      "position": { "x": 100, "y": 800 },
+      "assert": {
+        "prompt": "验证页面显示商品名称、价格和加入购物车按钮",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-9",
+      "type": "Action",
+      "label": "选择商品规格",
+      "position": { "x": 100, "y": 900 },
+      "action": {
+        "prompt": "如果页面有颜色或规格选择，点击选择第一个规格选项",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-10",
+      "type": "Action",
+      "label": "加入购物车",
+      "position": { "x": 100, "y": 1000 },
+      "action": {
+        "prompt": "点击页面上的加入购物车按钮",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-11",
+      "type": "Wait",
+      "label": "等待提示",
+      "position": { "x": 100, "y": 1100 },
+      "wait": {
+        "prompt": "等待加入购物车成功提示出现",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-12",
+      "type": "Action",
+      "label": "前往购物车",
+      "position": { "x": 100, "y": 1200 },
+      "action": {
+        "prompt": "点击查看购物车或购物车图标进入购物车页面",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-13",
+      "type": "Wait",
+      "label": "等待购物车页面",
+      "position": { "x": 100, "y": 1300 },
+      "wait": {
+        "prompt": "等待购物车页面加载完成",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-14",
+      "type": "Assert",
+      "label": "验证购物车商品",
+      "position": { "x": 100, "y": 1400 },
+      "assert": {
+        "prompt": "验证购物车中显示刚加入的商品",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-15",
+      "type": "Action",
+      "label": "勾选商品",
+      "position": { "x": 100, "y": 1500 },
+      "action": {
+        "prompt": "勾选购物车中的商品复选框",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-16",
+      "type": "Action",
+      "label": "点击结算",
+      "position": { "x": 100, "y": 1600 },
+      "action": {
+        "prompt": "点击去结算或立即购买按钮",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-17",
+      "type": "Wait",
+      "label": "等待结算页面",
+      "position": { "x": 100, "y": 1700 },
+      "wait": {
+        "prompt": "等待订单确认页面加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-18",
+      "type": "Condition",
+      "label": "检查是否需要登录",
+      "position": { "x": 100, "y": 1800 },
+      "condition": {
+        "prompt": "检查是否跳转到登录页面"
+      }
+    },
+    {
+      "id": "node-19",
+      "type": "Action",
+      "label": "登录账号",
+      "position": { "x": 100, "y": 1920 },
+      "action": {
+        "prompt": "在登录页面输入用户名和密码，点击登录",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-20",
+      "type": "Wait",
+      "label": "等待登录后跳转",
+      "position": { "x": 100, "y": 2020 },
+      "wait": {
+        "prompt": "等待登录成功后页面跳转到结算页面",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-21",
+      "type": "Action",
+      "label": "选择收货地址",
+      "position": { "x": 300, "y": 1800 },
+      "action": {
+        "prompt": "如果有多个收货地址，点击选择第一个地址；如果没有，点击添加新地址并填写",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-22",
+      "type": "Wait",
+      "label": "等待地址选择",
+      "position": { "x": 300, "y": 1920 },
+      "wait": {
+        "prompt": "等待地址选择完成",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-23",
+      "type": "Action",
+      "label": "选择支付方式",
+      "position": { "x": 300, "y": 2020 },
+      "action": {
+        "prompt": "选择支付方式，点击支付宝或微信支付",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-24",
+      "type": "Action",
+      "label": "提交订单",
+      "position": { "x": 300, "y": 2120 },
+      "action": {
+        "prompt": "点击提交订单按钮",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-25",
+      "type": "Wait",
+      "label": "等待支付页面",
+      "position": { "x": 300, "y": 2220 },
+      "wait": {
+        "prompt": "等待跳转到支付页面",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-26",
+      "type": "Assert",
+      "label": "验证订单创建成功",
+      "position": { "x": 300, "y": 2320 },
+      "assert": {
+        "prompt": "验证页面显示订单创建成功或等待支付状态",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-27",
+      "type": "Extract",
+      "label": "提取订单号",
+      "position": { "x": 300, "y": 2420 },
+      "extract": {
+        "prompt": "提取当前页面显示的订单号",
+        "as": "orderNumber"
+      }
+    },
+    {
+      "id": "node-28",
+      "type": "Action",
+      "label": "完成模拟支付",
+      "position": { "x": 300, "y": 2520 },
+      "action": {
+        "prompt": "点击确认支付按钮完成模拟支付流程",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-29",
+      "type": "Wait",
+      "label": "等待支付结果",
+      "position": { "x": 300, "y": 2620 },
+      "wait": {
+        "prompt": "等待支付成功页面",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-30",
+      "type": "Assert",
+      "label": "验证支付成功",
+      "position": { "x": 300, "y": 2720 },
+      "assert": {
+        "prompt": "验证页面显示支付成功或订单已创建",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-31",
+      "type": "Extract",
+      "label": "提取订单详情",
+      "position": { "x": 300, "y": 2820 },
+      "extract": {
+        "prompt": "提取订单详情页的订单号、订单金额、商品信息",
+        "as": "orderDetails"
+      }
+    },
+    {
+      "id": "node-32",
+      "type": "Action",
+      "label": "截图保存",
+      "position": { "x": 300, "y": 2920 },
+      "action": {
+        "prompt": "截取当前订单详情页面",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-33",
+      "type": "End",
+      "label": "流程结束",
+      "position": { "x": 300, "y": 3020 }
+    }
+  ],
+  "edges": [
+    { "id": "edge-1", "source": "node-1", "target": "node-2" },
+    { "id": "edge-2", "source": "node-2", "target": "node-3" },
+    { "id": "edge-3", "source": "node-3", "target": "node-4" },
+    { "id": "edge-4", "source": "node-4", "target": "node-5" },
+    { "id": "edge-5", "source": "node-5", "target": "node-6" },
+    { "id": "edge-6", "source": "node-6", "target": "node-7" },
+    { "id": "edge-7", "source": "node-7", "target": "node-8" },
+    { "id": "edge-8", "source": "node-8", "target": "node-9" },
+    { "id": "edge-9", "source": "node-9", "target": "node-10" },
+    { "id": "edge-10", "source": "node-10", "target": "node-11" },
+    { "id": "edge-11", "source": "node-11", "target": "node-12" },
+    { "id": "edge-12", "source": "node-12", "target": "node-13" },
+    { "id": "edge-13", "source": "node-13", "target": "node-14" },
+    { "id": "edge-14", "source": "node-14", "target": "node-15" },
+    { "id": "edge-15", "source": "node-15", "target": "node-16" },
+    { "id": "edge-16", "source": "node-16", "target": "node-17" },
+    { "id": "edge-17", "source": "node-17", "target": "node-18" },
+    { "id": "edge-18", "source": "node-18", "target": "node-19", "label": "是" },
+    { "id": "edge-19", "source": "node-18", "target": "node-21", "label": "否" },
+    { "id": "edge-20", "source": "node-19", "target": "node-20" },
+    { "id": "edge-21", "source": "node-20", "target": "node-21" },
+    { "id": "edge-22", "source": "node-21", "target": "node-22" },
+    { "id": "edge-23", "source": "node-22", "target": "node-23" },
+    { "id": "edge-24", "source": "node-23", "target": "node-24" },
+    { "id": "edge-25", "source": "node-24", "target": "node-25" },
+    { "id": "edge-26", "source": "node-25", "target": "node-26" },
+    { "id": "edge-27", "source": "node-26", "target": "node-27" },
+    { "id": "edge-28", "source": "node-27", "target": "node-28" },
+    { "id": "edge-29", "source": "node-28", "target": "node-29" },
+    { "id": "edge-30", "source": "node-29", "target": "node-30" },
+    { "id": "edge-31", "source": "node-30", "target": "node-31" },
+    { "id": "edge-32", "source": "node-31", "target": "node-32" },
+    { "id": "edge-33", "source": "node-32", "target": "node-33" }
+  ]
+}

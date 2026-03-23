@@ -19,22 +19,22 @@ interface NodeItem {
 
 /**
  * 简化的节点列表
- * 所有节点都支持语义化描述
+ * 所有节点都支持精细配置模式
  */
 const nodeItems: NodeItem[] = [
   // 流程控制
-  { type: 'Start', label: '开始', icon: '▶', category: 'flow', description: '流程开始节点' },
-  { type: 'End', label: '结束', icon: '■', category: 'flow', description: '流程结束节点' },
+  { type: 'Start', label: '开始', icon: '▶️', category: 'flow', description: '流程开始节点' },
+  { type: 'End', label: '结束', icon: '🛑', category: 'flow', description: '流程结束节点' },
   // 页面操作
-  { type: 'Navigate', label: '打开页面', icon: '🌐', category: 'page', description: '导航到指定页面，支持语义化描述' },
-  { type: 'Action', label: '执行操作', icon: '👆', category: 'action', description: '点击、输入、选择等操作，支持语义化描述' },
-  { type: 'Wait', label: '等待', icon: '⏱', category: 'page', description: '等待页面加载或元素出现，支持语义化描述' },
+  { type: 'Navigate', label: '打开页面', icon: '🔗', category: 'page', description: '导航到指定页面' },
+  { type: 'Action', label: '执行操作', icon: '👆', category: 'action', description: '点击、输入、选择等操作' },
+  { type: 'Wait', label: '等待', icon: '⏳', category: 'page', description: '等待页面加载或元素出现' },
   // 验证与数据
-  { type: 'Assert', label: '验证', icon: '✓', category: 'verify', description: '验证页面状态，支持语义化描述' },
-  { type: 'Extract', label: '提取数据', icon: '↗', category: 'data', description: '从页面提取数据，支持语义化描述' },
+  { type: 'Assert', label: '验证', icon: '✅', category: 'verify', description: '验证页面状态' },
+  { type: 'Extract', label: '提取数据', icon: '📥', category: 'data', description: '从页面提取数据' },
   // 流程逻辑
-  { type: 'Condition', label: '条件分支', icon: '◇', category: 'logic', description: '根据条件分支执行，支持语义化描述' },
-  { type: 'SubFlow', label: '子流程', icon: '⤵', category: 'logic', description: '调用其他测试流程' }
+  { type: 'Condition', label: '条件分支', icon: '🔀', category: 'logic', description: '根据条件分支执行' },
+  { type: 'SubFlow', label: '子流程', icon: '🔄', category: 'logic', description: '调用其他测试流程' }
 ]
 
 /**
@@ -238,16 +238,25 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
 }
 
 .palette-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  border-radius: 6px;
-  background: #f5f7fa;
+  font-size: 18px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
+
+.palette-icon.start { background: #e8f5e9; }
+.palette-icon.end { background: #ffebee; }
+.palette-icon.navigate { background: #e0f2f1; }
+.palette-icon.action { background: #e3f2fd; }
+.palette-icon.wait { background: #f5f5f5; }
+.palette-icon.assert { background: #fff8e1; }
+.palette-icon.extract { background: #f3e5f5; }
+.palette-icon.condition { background: #fff3e0; }
+.palette-icon.subflow { background: #e0f7fa; }
 
 .palette-item-content {
   flex: 1;

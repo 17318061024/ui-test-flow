@@ -1,0 +1,631 @@
+{
+  "id": "data-driven-test-flow",
+  "name": "数据驱动测试流程",
+  "description": "使用变量存储测试数据，数据驱动自动化测试，提取商品信息后批量验证价格",
+  "version": 1,
+  "tags": [
+    "数据驱动",
+    "变量",
+    "批量测试",
+    "复杂场景"
+  ],
+  "author": "UI Test Flow",
+  "nodes": [
+    {
+      "id": "node-1",
+      "type": "Start",
+      "label": "开始数据驱动测试",
+      "position": {
+        "x": 100,
+        "y": 100
+      }
+    },
+    {
+      "id": "node-2",
+      "type": "Action",
+      "label": "初始化测试数据变量",
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "action": {
+        "prompt": "初始化测试数据变量：searchKeyword='iPhone 15 Pro'，expectedMinPrice=5000，expectedMaxPrice=15000",
+        "value": "searchKeyword=iPhone 15 Pro; expectedMinPrice=5000; expectedMaxPrice=15000",
+        "isVariable": false,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-3",
+      "type": "Navigate",
+      "label": "打开电商搜索页",
+      "position": {
+        "x": 100,
+        "y": 300
+      },
+      "navigate": {
+        "prompt": "打开电商网站的搜索页面",
+        "url": "https://demo.example.com/search",
+        "isVariable": false,
+        "timeout": 30
+      }
+    },
+    {
+      "id": "node-4",
+      "type": "Action",
+      "label": "输入搜索关键词",
+      "position": {
+        "x": 100,
+        "y": 400
+      },
+      "action": {
+        "prompt": "在搜索框输入变量 searchKeyword 的值",
+        "value": "$searchKeyword",
+        "isVariable": true,
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-5",
+      "type": "Action",
+      "label": "点击搜索按钮",
+      "position": {
+        "x": 100,
+        "y": 500
+      },
+      "action": {
+        "prompt": "点击搜索按钮执行搜索",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-6",
+      "type": "Wait",
+      "label": "等待搜索结果",
+      "position": {
+        "x": 100,
+        "y": 600
+      },
+      "wait": {
+        "prompt": "等待搜索结果页面加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-7",
+      "type": "Extract",
+      "label": "提取商品名称列表",
+      "position": {
+        "x": 100,
+        "y": 700
+      },
+      "extract": {
+        "prompt": "提取搜索结果中所有商品的名称，保存为变量 productNames",
+        "as": "productNames"
+      }
+    },
+    {
+      "id": "node-8",
+      "type": "Extract",
+      "label": "提取商品价格列表",
+      "position": {
+        "x": 100,
+        "y": 800
+      },
+      "extract": {
+        "prompt": "提取搜索结果中所有商品的价格，保存为变量 productPrices",
+        "as": "productPrices"
+      }
+    },
+    {
+      "id": "node-9",
+      "type": "Extract",
+      "label": "提取商品销量",
+      "position": {
+        "x": 100,
+        "y": 900
+      },
+      "extract": {
+        "prompt": "提取第一个商品的销量数据，保存为变量 firstProductSales",
+        "as": "firstProductSales"
+      }
+    },
+    {
+      "id": "node-10",
+      "type": "Assert",
+      "label": "验证商品数量",
+      "position": {
+        "x": 100,
+        "y": 1000
+      },
+      "assert": {
+        "prompt": "验证搜索结果中至少有1个商品",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-11",
+      "type": "Condition",
+      "label": "检查价格变量",
+      "position": {
+        "x": 100,
+        "y": 1100
+      },
+      "condition": {
+        "prompt": "检查提取的商品价格是否为空"
+      }
+    },
+    {
+      "id": "node-12",
+      "type": "Action",
+      "label": "记录价格信息",
+      "position": {
+        "x": 50,
+        "y": 1220
+      },
+      "action": {
+        "prompt": "将提取的价格信息 $productPrices 和销量 $firstProductSales 输出到日志",
+        "value": "商品价格: $productPrices, 销量: $firstProductSales",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-13",
+      "type": "Extract",
+      "label": "提取商品评分",
+      "position": {
+        "x": 200,
+        "y": 1100
+      },
+      "extract": {
+        "prompt": "提取第一个商品的评分，保存为变量 firstProductRating",
+        "as": "firstProductRating"
+      }
+    },
+    {
+      "id": "node-14",
+      "type": "Action",
+      "label": "点击第一个商品",
+      "position": {
+        "x": 100,
+        "y": 1340
+      },
+      "action": {
+        "prompt": "点击搜索结果中第一个商品的链接",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-15",
+      "type": "Wait",
+      "label": "等待详情页",
+      "position": {
+        "x": 100,
+        "y": 1460
+      },
+      "wait": {
+        "prompt": "等待商品详情页面完全加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-16",
+      "type": "Extract",
+      "label": "提取详情页价格",
+      "position": {
+        "x": 100,
+        "y": 1580
+      },
+      "extract": {
+        "prompt": "提取商品详情页的价格，保存为变量 detailPrice",
+        "as": "detailPrice"
+      }
+    },
+    {
+      "id": "node-17",
+      "type": "Extract",
+      "label": "提取商品SKU",
+      "position": {
+        "x": 100,
+        "y": 1700
+      },
+      "extract": {
+        "prompt": "提取商品的SKU编号，保存为变量 productSKU",
+        "as": "productSKU"
+      }
+    },
+    {
+      "id": "node-18",
+      "type": "Extract",
+      "label": "提取库存状态",
+      "position": {
+        "x": 100,
+        "y": 1820
+      },
+      "extract": {
+        "prompt": "提取商品的库存状态（有货/无货），保存为变量 stockStatus",
+        "as": "stockStatus"
+      }
+    },
+    {
+      "id": "node-19",
+      "type": "Condition",
+      "label": "检查库存状态",
+      "position": {
+        "x": 100,
+        "y": 1940
+      },
+      "condition": {
+        "prompt": "检查商品是否有库存"
+      }
+    },
+    {
+      "id": "node-20",
+      "type": "Action",
+      "label": "点击加入购物车",
+      "position": {
+        "x": 50,
+        "y": 2060
+      },
+      "action": {
+        "prompt": "点击加入购物车按钮",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-21",
+      "type": "Assert",
+      "label": "验证加入成功",
+      "position": {
+        "x": 50,
+        "y": 2180
+      },
+      "assert": {
+        "prompt": "验证页面显示加入购物车成功提示",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-22",
+      "type": "Action",
+      "label": "记录缺货信息",
+      "position": {
+        "x": 200,
+        "y": 2060
+      },
+      "action": {
+        "prompt": "记录商品缺货信息到日志",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-23",
+      "type": "Navigate",
+      "label": "返回搜索页",
+      "position": {
+        "x": 100,
+        "y": 2300
+      },
+      "navigate": {
+        "prompt": "返回搜索结果页面继续测试",
+        "url": "https://demo.example.com/search?q=iPhone 15 Pro",
+        "isVariable": false,
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-24",
+      "type": "Action",
+      "label": "点击第二个商品",
+      "position": {
+        "x": 100,
+        "y": 2420
+      },
+      "action": {
+        "prompt": "点击搜索结果中第二个商品的链接",
+        "timeout": 10
+      }
+    },
+    {
+      "id": "node-25",
+      "type": "Wait",
+      "label": "等待详情页加载",
+      "position": {
+        "x": 100,
+        "y": 2540
+      },
+      "wait": {
+        "prompt": "等待商品详情页面加载",
+        "timeout": 15
+      }
+    },
+    {
+      "id": "node-26",
+      "type": "Extract",
+      "label": "提取第二个商品信息",
+      "position": {
+        "x": 100,
+        "y": 2660
+      },
+      "extract": {
+        "prompt": "提取第二个商品的名称、价格、SKU，保存为变量 secondProduct",
+        "as": "secondProduct"
+      }
+    },
+    {
+      "id": "node-27",
+      "type": "Condition",
+      "label": "比较两个商品价格",
+      "position": {
+        "x": 100,
+        "y": 2780
+      },
+      "condition": {
+        "prompt": "比较第一个商品和第二个商品的价格"
+      }
+    },
+    {
+      "id": "node-28",
+      "type": "Action",
+      "label": "记录价格对比",
+      "position": {
+        "x": 50,
+        "y": 2900
+      },
+      "action": {
+        "prompt": "记录第一个商品价格 $detailPrice 与第二个商品价格 $secondProduct 的对比结果到日志",
+        "value": "第一个商品: $detailPrice, 第二个商品: $secondProduct, 价格对比: $detailPrice < $secondProduct",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-29",
+      "type": "Extract",
+      "label": "提取用户信息",
+      "position": {
+        "x": 200,
+        "y": 2780
+      },
+      "extract": {
+        "prompt": "提取页面上的用户名或用户信息，保存为变量 currentUser",
+        "as": "currentUser"
+      }
+    },
+    {
+      "id": "node-30",
+      "type": "Action",
+      "label": "记录综合结果",
+      "position": {
+        "x": 100,
+        "y": 3020
+      },
+      "action": {
+        "prompt": "汇总所有提取的测试数据：商品名称 $productNames，价格 $productPrices，SKU $productSKU，库存 $stockStatus，评分 $firstProductRating",
+        "value": "测试汇总: 商品名称=$productNames, 价格=$productPrices, SKU=$productSKU, 库存=$stockStatus, 评分=$firstProductRating",
+        "isVariable": true,
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-31",
+      "type": "Extract",
+      "label": "提取测试总结",
+      "position": {
+        "x": 100,
+        "y": 3140
+      },
+      "extract": {
+        "prompt": "提取页面标题和当前URL，保存为测试结果摘要 testSummary",
+        "as": "testSummary"
+      }
+    },
+    {
+      "id": "node-32",
+      "type": "Action",
+      "label": "截图保存结果",
+      "position": {
+        "x": 100,
+        "y": 3260
+      },
+      "action": {
+        "prompt": "截取当前测试结果页面保存",
+        "timeout": 5
+      }
+    },
+    {
+      "id": "node-33",
+      "type": "End",
+      "label": "测试完成",
+      "position": {
+        "x": 100,
+        "y": 3380
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "node-1",
+      "target": "node-2"
+    },
+    {
+      "id": "edge-2",
+      "source": "node-2",
+      "target": "node-3"
+    },
+    {
+      "id": "edge-3",
+      "source": "node-3",
+      "target": "node-4"
+    },
+    {
+      "id": "edge-4",
+      "source": "node-4",
+      "target": "node-5"
+    },
+    {
+      "id": "edge-5",
+      "source": "node-5",
+      "target": "node-6"
+    },
+    {
+      "id": "edge-6",
+      "source": "node-6",
+      "target": "node-7"
+    },
+    {
+      "id": "edge-7",
+      "source": "node-7",
+      "target": "node-8"
+    },
+    {
+      "id": "edge-8",
+      "source": "node-8",
+      "target": "node-9"
+    },
+    {
+      "id": "edge-9",
+      "source": "node-9",
+      "target": "node-10"
+    },
+    {
+      "id": "edge-10",
+      "source": "node-10",
+      "target": "node-11"
+    },
+    {
+      "id": "edge-11",
+      "source": "node-11",
+      "target": "node-12",
+      "label": "为空"
+    },
+    {
+      "id": "edge-12",
+      "source": "node-11",
+      "target": "node-13",
+      "label": "不为空"
+    },
+    {
+      "id": "edge-13",
+      "source": "node-12",
+      "target": "node-14"
+    },
+    {
+      "id": "edge-14",
+      "source": "node-13",
+      "target": "node-14"
+    },
+    {
+      "id": "edge-15",
+      "source": "node-14",
+      "target": "node-15"
+    },
+    {
+      "id": "edge-16",
+      "source": "node-15",
+      "target": "node-16"
+    },
+    {
+      "id": "edge-17",
+      "source": "node-16",
+      "target": "node-17"
+    },
+    {
+      "id": "edge-18",
+      "source": "node-17",
+      "target": "node-18"
+    },
+    {
+      "id": "edge-19",
+      "source": "node-18",
+      "target": "node-19"
+    },
+    {
+      "id": "edge-20",
+      "source": "node-19",
+      "target": "node-20",
+      "label": "有货"
+    },
+    {
+      "id": "edge-21",
+      "source": "node-19",
+      "target": "node-22",
+      "label": "无货"
+    },
+    {
+      "id": "edge-22",
+      "source": "node-20",
+      "target": "node-21"
+    },
+    {
+      "id": "edge-23",
+      "source": "node-21",
+      "target": "node-23"
+    },
+    {
+      "id": "edge-24",
+      "source": "node-22",
+      "target": "node-23"
+    },
+    {
+      "id": "edge-25",
+      "source": "node-23",
+      "target": "node-24"
+    },
+    {
+      "id": "edge-26",
+      "source": "node-24",
+      "target": "node-25"
+    },
+    {
+      "id": "edge-27",
+      "source": "node-25",
+      "target": "node-26"
+    },
+    {
+      "id": "edge-28",
+      "source": "node-26",
+      "target": "node-27"
+    },
+    {
+      "id": "edge-29",
+      "source": "node-27",
+      "target": "node-28",
+      "label": "是"
+    },
+    {
+      "id": "edge-30",
+      "source": "node-27",
+      "target": "node-29",
+      "label": "否"
+    },
+    {
+      "id": "edge-31",
+      "source": "node-28",
+      "target": "node-30"
+    },
+    {
+      "id": "edge-32",
+      "source": "node-29",
+      "target": "node-30"
+    },
+    {
+      "id": "edge-33",
+      "source": "node-30",
+      "target": "node-31"
+    },
+    {
+      "id": "edge-34",
+      "source": "node-31",
+      "target": "node-32"
+    },
+    {
+      "id": "edge-35",
+      "source": "node-32",
+      "target": "node-33"
+    }
+  ],
+  "updatedAt": "2026-03-23T15:46:29.849Z"
+}

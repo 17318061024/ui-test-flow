@@ -213,6 +213,11 @@ html, body, #app {
 /* Flow List */
 .flow-list {
   padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .flow-list-header {
@@ -226,6 +231,7 @@ html, body, #app {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
+  flex: 1;
 }
 
 .flow-card {

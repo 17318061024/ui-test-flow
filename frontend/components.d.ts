@@ -8,6 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActionNode: typeof import('./src/components/FlowDesigner/CustomNodes/ActionNode.vue')['default']
+    AIActionNode: typeof import('./src/components/FlowDesigner/CustomNodes/AIActionNode.vue')['default']
+    AIAssertNode: typeof import('./src/components/FlowDesigner/CustomNodes/AIAssertNode.vue')['default']
+    AIQueryNode: typeof import('./src/components/FlowDesigner/CustomNodes/AIQueryNode.vue')['default']
     AssertNode: typeof import('./src/components/FlowDesigner/CustomNodes/AssertNode.vue')['default']
     ConditionNode: typeof import('./src/components/FlowDesigner/CustomNodes/ConditionNode.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -25,11 +28,13 @@ declare module 'vue' {
     EndNode: typeof import('./src/components/FlowDesigner/CustomNodes/EndNode.vue')['default']
     ExtractNode: typeof import('./src/components/FlowDesigner/CustomNodes/ExtractNode.vue')['default']
     FlowDesigner: typeof import('./src/components/FlowDesigner/index.vue')['default']
+    NavigateNode: typeof import('./src/components/FlowDesigner/CustomNodes/NavigateNode.vue')['default']
     NodePalette: typeof import('./src/components/FlowDesigner/NodePalette.vue')['default']
     PropertyPanel: typeof import('./src/components/FlowDesigner/PropertyPanel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StartNode: typeof import('./src/components/FlowDesigner/CustomNodes/StartNode.vue')['default']
     SubFlowNode: typeof import('./src/components/FlowDesigner/CustomNodes/SubFlowNode.vue')['default']
+    WaitNode: typeof import('./src/components/FlowDesigner/CustomNodes/WaitNode.vue')['default']
   }
 }

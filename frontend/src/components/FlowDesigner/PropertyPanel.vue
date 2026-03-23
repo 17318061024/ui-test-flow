@@ -18,39 +18,6 @@ watch(selectedNode, (node) => {
     // 为不同类型节点初始化配置对象
     const base = { ...node }
 
-    // 点击操作节点
-    if (node.type === 'Click' && !base.action) {
-      base.action = { method: 'click', target: '', value: '', timeout: 30 }
-    }
-    if (node.type === 'DoubleClick' && !base.action) {
-      base.action = { method: 'doubleClick', target: '', value: '', timeout: 30 }
-    }
-    if (node.type === 'RightClick' && !base.action) {
-      base.action = { method: 'rightClick', target: '', value: '', timeout: 30 }
-    }
-    if (node.type === 'Hover' && !base.action) {
-      base.action = { method: 'hover', target: '', value: '', timeout: 30 }
-    }
-    // 输入操作节点
-    if (node.type === 'Input' && !base.action) {
-      base.action = { method: 'input', target: '', value: '', isVariable: false, timeout: 30 }
-    }
-    if (node.type === 'Select' && !base.action) {
-      base.action = { method: 'select', target: '', value: '', selectBy: 'value', timeout: 30 }
-    }
-    // 页面操作节点
-    if (node.type === 'Scroll' && !base.action) {
-      base.action = { method: 'scroll', target: '', scrollDirection: 'down', scrollAmount: 300, timeout: 30 }
-    }
-    if (node.type === 'Screenshot' && !base.action) {
-      base.action = { method: 'screenshot', target: '', timeout: 30 }
-    }
-    if (node.type === 'Refresh' && !base.action) {
-      base.action = { method: 'refresh', target: '', timeout: 30 }
-    }
-    if (node.type === 'SwitchFrame' && !base.action) {
-      base.action = { method: 'switchFrame', frameSelector: '', timeout: 30 }
-    }
     // 通用操作节点
     if (node.type === 'Action' && !base.action) {
       base.action = { method: 'click', target: '', value: '' }
@@ -69,7 +36,7 @@ watch(selectedNode, (node) => {
     }
     // 子流程节点
     if (node.type === 'SubFlow' && !base.subFlow) {
-      base.subFlow = { flowId: '' }
+      base.subFlow = { flowId: '', mapping: {} }
     }
     // 导航节点
     if (node.type === 'Navigate' && !base.navigate) {
@@ -79,18 +46,7 @@ watch(selectedNode, (node) => {
     if (node.type === 'Wait' && !base.wait) {
       base.wait = { waitType: 'time', timeout: 1, waitFor: '' }
     }
-    // AI 动作节点
-    if (node.type === 'AIAction' && !base.aiAction) {
-      base.aiAction = { prompt: '', timeout: 30 }
-    }
-    // AI 查询节点
-    if (node.type === 'AIQuery' && !base.aiQuery) {
-      base.aiQuery = { prompt: '', schema: '', as: '' }
-    }
-    // AI 断言节点
-    if (node.type === 'AIAssert' && !base.aiAssert) {
-      base.aiAssert = { prompt: '', timeout: 30 }
-    }
+
     localNode.value = base
   } else {
     localNode.value = {}
@@ -255,6 +211,12 @@ const needsInputValue = computed(() => {
   return localNode.value.action?.method === 'input' || localNode.value.action?.method === 'select'
 })
 
+// 判断操作是否需要目标元素
+const needsTarget = computed(() => {
+  const method = localNode.value.action?.method
+  return method && !['wait', 'screenshot', 'refresh'].includes(method)
+})
+
 // 获取 Select 节点的占位符
 function getSelectPlaceholder() {
   const selectBy = localNode.value.action?.selectBy
@@ -283,244 +245,88 @@ function getSelectPlaceholder() {
         </el-form-item>
       </el-form>
 
-      <!-- Click 节点配置 -->
-      <template v-if="selectedNode.type === 'Click' && localNode.action">
-        <div class="property-section-title">点击配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素，如：登录按钮" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- DoubleClick 节点配置 -->
-      <template v-if="selectedNode.type === 'DoubleClick' && localNode.action">
-        <div class="property-section-title">双击配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素，如：文件列表项" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- RightClick 节点配置 -->
-      <template v-if="selectedNode.type === 'RightClick' && localNode.action">
-        <div class="property-section-title">右键点击配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- Hover 节点配置 -->
-      <template v-if="selectedNode.type === 'Hover' && localNode.action">
-        <div class="property-section-title">悬停配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素，如：下拉菜单" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- Input 节点配置 -->
-      <template v-if="selectedNode.type === 'Input' && localNode.action">
-        <div class="property-section-title">输入配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素，如：用户名输入框" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="输入值">
-            <el-input v-model="localNode.action.value" placeholder="输入的内容" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="变量输入">
-            <el-switch v-model="localNode.action.isVariable" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399; font-size: 12px;">勾选后输入值将作为变量引用</span>
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- Select 节点配置 -->
-      <template v-if="selectedNode.type === 'Select' && localNode.action">
-        <div class="property-section-title">选择配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素，如：下拉选择框" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="选择方式">
-            <el-select v-model="localNode.action.selectBy" @change="saveChanges">
-              <el-option
-                v-for="sb in selectByOptions"
-                :key="sb.value"
-                :label="sb.label"
-                :value="sb.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择值">
-            <el-input v-model="localNode.action.value" :placeholder="getSelectPlaceholder()" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="变量输入">
-            <el-switch v-model="localNode.action.isVariable" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399; font-size: 12px;">勾选后选择值将作为变量引用</span>
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
 
       <!-- Action 节点配置 -->
       <template v-if="selectedNode.type === 'Action' && localNode.action">
         <div class="property-section-title">操作配置</div>
+
         <el-form label-width="80px" size="small">
           <el-form-item label="操作方法">
-            <el-select v-model="localNode.action.method" @change="saveChanges">
-              <el-option
-                v-for="method in actionMethods"
-                :key="method.value"
-                :label="method.label"
-                :value="method.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="描述目标元素" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="输入值" v-if="needsInputValue">
-            <el-input v-model="localNode.action.value" placeholder="输入的值" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="1" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- Scroll 节点配置 -->
-      <template v-if="selectedNode.type === 'Scroll' && localNode.action">
-        <div class="property-section-title">滚动配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="留空则滚动整个页面，否则滚动到指定元素" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="滚动方向">
-            <el-select v-model="localNode.action.scrollDirection" @change="saveChanges">
-              <el-option
-                v-for="sd in scrollDirectionOptions"
-                :key="sd.value"
-                :label="sd.label"
-                :value="sd.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="滚动距离">
-            <el-input-number v-model="localNode.action.scrollAmount" :min="0" :step="100" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">像素</span>
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- Screenshot 节点配置 -->
-      <template v-if="selectedNode.type === 'Screenshot' && localNode.action">
-        <div class="property-section-title">截图配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.action.target" placeholder="留空则截取整个页面，否则截取指定元素" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- Refresh 节点配置 -->
-      <template v-if="selectedNode.type === 'Refresh' && localNode.action">
-        <div class="property-section-title">刷新配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- SwitchFrame 节点配置 -->
-      <template v-if="selectedNode.type === 'SwitchFrame' && localNode.action">
-        <div class="property-section-title">切换 Frame 配置</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="Frame 选择器">
-            <el-input v-model="localNode.action.frameSelector" placeholder="iframe 的 id、name 或索引，如：#frame1、0" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="说明">
-            <div style="color: #909399; font-size: 12px;">
-              支持以下格式：<br>
-              • #frameId - 通过 id 选择<br>
-              • frameName - 通过 name 选择<br>
-              • 0 - 通过索引选择（从 0 开始）<br>
-              • parent - 返回父 Frame<br>
-              • top - 返回顶层 Frame
-            </div>
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.action.timeout" :min="0" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
+              <el-select v-model="localNode.action.method" @change="saveChanges">
+                <el-option
+                  v-for="method in actionMethods"
+                  :key="method.value"
+                  :label="method.label"
+                  :value="method.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="目标元素" v-if="needsTarget">
+              <el-input v-model="localNode.action.target" placeholder="描述目标元素" @blur="saveChanges" />
+            </el-form-item>
+            <el-form-item label="输入值" v-if="needsInputValue">
+              <el-input v-model="localNode.action.value" placeholder="输入的值" @blur="saveChanges" />
+            </el-form-item>
+            <el-form-item label="变量输入" v-if="needsInputValue">
+              <el-switch v-model="localNode.action.isVariable" @change="saveChanges" />
+              <span style="margin-left: 8px; color: #909399; font-size: 12px;">勾选后输入值将作为变量引用</span>
+            </el-form-item>
+            <el-form-item label="Frame" v-if="localNode.action.method === 'switchFrame'">
+              <el-input v-model="localNode.action.frameSelector" placeholder="iframe 的 id、name 或索引" @blur="saveChanges" />
+            </el-form-item>
+            <el-form-item label="滚动方向" v-if="localNode.action.method === 'scroll'">
+              <el-select v-model="localNode.action.scrollDirection" @change="saveChanges">
+                <el-option
+                  v-for="sd in scrollDirectionOptions"
+                  :key="sd.value"
+                  :label="sd.label"
+                  :value="sd.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="滚动距离" v-if="localNode.action.method === 'scroll'">
+              <el-input-number v-model="localNode.action.scrollAmount" :min="0" :step="100" @change="saveChanges" />
+              <span style="margin-left: 8px; color: #909399;">像素</span>
+            </el-form-item>
+            <el-form-item label="超时时间">
+              <el-input-number v-model="localNode.action.timeout" :min="0" :step="1" @change="saveChanges" />
+              <span style="margin-left: 8px; color: #909399;">秒</span>
+            </el-form-item>
+          </el-form>
       </template>
 
       <!-- Assert 节点配置 -->
       <template v-if="selectedNode.type === 'Assert' && localNode.assert">
         <div class="property-section-title">断言配置</div>
+
         <el-form label-width="80px" size="small">
           <el-form-item label="断言类型">
-            <el-select v-model="localNode.assert.type" @change="saveChanges">
-              <el-option
-                v-for="t in assertTypes"
-                :key="t.value"
-                :label="t.label"
-                :value="t.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="目标元素">
-            <el-input v-model="localNode.assert.target" placeholder="描述目标元素" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="期望值">
-            <el-input v-model="localNode.assert.expected" placeholder="期望的值" @blur="saveChanges" />
-          </el-form-item>
-        </el-form>
+              <el-select v-model="localNode.assert.type" @change="saveChanges">
+                <el-option
+                  v-for="t in assertTypes"
+                  :key="t.value"
+                  :label="t.label"
+                  :value="t.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="目标元素">
+              <el-input v-model="localNode.assert.target" placeholder="描述目标元素" @blur="saveChanges" />
+            </el-form-item>
+            <el-form-item label="期望值">
+              <el-input v-model="localNode.assert.expected" placeholder="期望的值" @blur="saveChanges" />
+            </el-form-item>
+            <el-form-item label="超时时间">
+              <el-input-number v-model="localNode.assert.timeout" :min="0" :step="5" @change="saveChanges" />
+              <span style="margin-left: 8px; color: #909399;">秒</span>
+            </el-form-item>
+          </el-form>
       </template>
 
       <!-- Extract 节点配置 -->
       <template v-if="selectedNode.type === 'Extract' && localNode.extract">
         <div class="property-section-title">提取配置</div>
+
         <el-form label-width="80px" size="small">
           <el-form-item label="目标元素">
             <el-input v-model="localNode.extract.target" placeholder="描述目标元素" @blur="saveChanges" />
@@ -537,6 +343,7 @@ function getSelectPlaceholder() {
       <!-- Condition 节点配置 -->
       <template v-if="selectedNode.type === 'Condition' && localNode.condition">
         <div class="property-section-title">条件配置</div>
+
         <el-form label-width="80px" size="small">
           <el-form-item label="变量名">
             <el-input v-model="localNode.condition.variable" placeholder="判断的变量名" @blur="saveChanges" />
@@ -570,6 +377,7 @@ function getSelectPlaceholder() {
       <!-- Navigate 节点配置 -->
       <template v-if="selectedNode.type === 'Navigate' && localNode.navigate">
         <div class="property-section-title">导航配置</div>
+
         <el-form label-width="80px" size="small">
           <el-form-item label="目标URL">
             <el-input v-model="localNode.navigate.url" placeholder="https://example.com" @blur="saveChanges" />
@@ -598,6 +406,7 @@ function getSelectPlaceholder() {
       <!-- Wait 节点配置 -->
       <template v-if="selectedNode.type === 'Wait' && localNode.wait">
         <div class="property-section-title">等待配置</div>
+
         <el-form label-width="80px" size="small">
           <el-form-item label="等待方式">
             <el-radio-group v-model="localNode.wait.waitType" @change="handleWaitTypeChange">
@@ -614,57 +423,6 @@ function getSelectPlaceholder() {
           </el-form-item>
           <el-form-item label="元素超时" v-if="localNode.wait.waitType === 'element'">
             <el-input-number v-model="localNode.wait.timeout" :min="1" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- AIAction 节点配置 -->
-      <template v-if="selectedNode.type === 'AIAction' && localNode.aiAction">
-        <div class="property-section-title">AI 动作配置 (Midscene.js)</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="AI 指令">
-            <el-input v-model="localNode.aiAction.prompt" type="textarea" rows="3" placeholder="用自然语言描述要执行的操作，如：点击登录按钮" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.aiAction.timeout" :min="5" :step="5" @change="saveChanges" />
-            <span style="margin-left: 8px; color: #909399;">秒</span>
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- AIQuery 节点配置 -->
-      <template v-if="selectedNode.type === 'AIQuery' && localNode.aiQuery">
-        <div class="property-section-title">AI 查询配置 (Midscene.js)</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="查询指令">
-            <el-input v-model="localNode.aiQuery.prompt" type="textarea" rows="3" placeholder="用自然语言描述要查询的内容，如：获取当前页面的用户名" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="返回格式">
-            <el-select v-model="localNode.aiQuery.schema" placeholder="选择返回格式" @change="saveChanges" clearable>
-              <el-option label="字符串 (string)" value="string" />
-              <el-option label="数字 (number)" value="number" />
-              <el-option label="布尔值 (boolean)" value="boolean" />
-              <el-option label="对象 (object)" value="object" />
-              <el-option label="数组 (array)" value="array" />
-              <el-option label="自定义 JSON" value="custom" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="变量名">
-            <el-input v-model="localNode.aiQuery.as" placeholder="保存查询结果为变量名" @blur="saveChanges" />
-          </el-form-item>
-        </el-form>
-      </template>
-
-      <!-- AIAssert 节点配置 -->
-      <template v-if="selectedNode.type === 'AIAssert' && localNode.aiAssert">
-        <div class="property-section-title">AI 断言配置 (Midscene.js)</div>
-        <el-form label-width="80px" size="small">
-          <el-form-item label="断言内容">
-            <el-input v-model="localNode.aiAssert.prompt" type="textarea" rows="3" placeholder="用自然语言描述要验证的内容，如：页面显示登录成功" @blur="saveChanges" />
-          </el-form-item>
-          <el-form-item label="超时时间">
-            <el-input-number v-model="localNode.aiAssert.timeout" :min="5" :step="5" @change="saveChanges" />
             <span style="margin-left: 8px; color: #909399;">秒</span>
           </el-form-item>
         </el-form>
@@ -708,6 +466,13 @@ function getSelectPlaceholder() {
 </template>
 
 <style scoped>
+.mode-switch {
+  margin: 12px 0;
+  padding: 10px;
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+
 .property-section-title {
   font-size: 13px;
   font-weight: 600;
