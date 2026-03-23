@@ -1,0 +1,114 @@
+{
+  "id": "c392d305-a196-4483-977b-446414da9a7d",
+  "name": "测试流程01",
+  "description": "",
+  "version": 1,
+  "tags": [],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "Start",
+      "label": "开始"
+    },
+    {
+      "id": "end",
+      "type": "End",
+      "label": "结束",
+      "position": {
+        "x": 726.5892382823474,
+        "y": 562.4952585461701
+      }
+    },
+    {
+      "id": "b069af3c-6f7a-462e-9ed8-ce1236fb8f70",
+      "type": "Action",
+      "label": "点击按钮",
+      "position": {
+        "x": 103.79837677308353,
+        "y": 393.95700760806596
+      },
+      "action": {
+        "method": "click",
+        "target": ""
+      },
+      "description": "点击按钮"
+    },
+    {
+      "id": "532a1b6d-a7a4-4b9d-a426-26111727ccc1",
+      "type": "Assert",
+      "label": "表格含有内容",
+      "position": {
+        "x": 317.5996309700386,
+        "y": 509.9255257605342
+      },
+      "assert": {
+        "type": "visible",
+        "target": "",
+        "expected": ""
+      },
+      "description": "表格含有内容"
+    },
+    {
+      "id": "2eb2d9e3-1681-4b86-9c19-a6548bb3788a",
+      "type": "SubFlow",
+      "label": "输入用户名",
+      "position": {
+        "x": 865,
+        "y": 186.00000762939453
+      },
+      "subFlow": {
+        "flowId": ""
+      },
+      "description": "输入用户名"
+    },
+    {
+      "id": "777cb9e3-97e7-4d93-aa2c-e0281d3394ef",
+      "type": "Action",
+      "label": "输入密码",
+      "position": {
+        "x": 841,
+        "y": 314.00000762939453
+      },
+      "action": {
+        "method": "click",
+        "target": ""
+      },
+      "description": "输入密码"
+    }
+  ],
+  "edges": [
+    {
+      "id": "fcf75208-5947-4ba9-bb5c-1d2986b34020",
+      "source": "start",
+      "target": "b069af3c-6f7a-462e-9ed8-ce1236fb8f70"
+    },
+    {
+      "id": "0274b996-42e6-4dcf-ac1b-88c53aa572ac",
+      "source": "532a1b6d-a7a4-4b9d-a426-26111727ccc1",
+      "target": "end"
+    },
+    {
+      "id": "50e6f4e0-a326-41ba-9dd1-bccf230b38df",
+      "source": "b069af3c-6f7a-462e-9ed8-ce1236fb8f70",
+      "target": "532a1b6d-a7a4-4b9d-a426-26111727ccc1"
+    },
+    {
+      "id": "a414c84a-a7e6-470b-952b-be7bd5556ead",
+      "source": "2eb2d9e3-1681-4b86-9c19-a6548bb3788a",
+      "target": "777cb9e3-97e7-4d93-aa2c-e0281d3394ef"
+    },
+    {
+      "id": "f4914c8e-c5b0-4be1-88ae-1fd2470d0c6f",
+      "source": "777cb9e3-97e7-4d93-aa2c-e0281d3394ef",
+      "target": "532a1b6d-a7a4-4b9d-a426-26111727ccc1"
+    },
+    {
+      "id": "0495c8cc-7f91-4693-b8c6-3c01588fbfc3",
+      "source": "start",
+      "target": "2eb2d9e3-1681-4b86-9c19-a6548bb3788a"
+    }
+  ],
+  "updatedAt": "2026-03-23T09:49:28.190Z",
+  "createdAt": "2026-03-23T07:55:07.374Z",
+  "author": "test"
+}

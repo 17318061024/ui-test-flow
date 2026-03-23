@@ -1,0 +1,394 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.app-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  justify-content: space-between;
+}
+
+.app-logo {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.app-menu {
+  display: flex;
+  gap: 20px;
+}
+
+.app-menu a {
+  color: #606266;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.app-menu a:hover,
+.app-menu a.active {
+  color: #409eff;
+  background: #ecf5ff;
+}
+
+.app-main {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Flow Designer Styles */
+.flow-designer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-designer-toolbar {
+  height: 50px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.flow-designer-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.flow-designer-palette {
+  width: 200px;
+  background: #f5f7fa;
+  border-right: 1px solid #e4e7ed;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.flow-designer-canvas {
+  flex: 1;
+  background: #fafafa;
+  min-height: 500px;
+}
+
+.flow-designer-properties {
+  width: 300px;
+  background: #fff;
+  border-left: 1px solid #e4e7ed;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.palette-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 12px;
+}
+
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  cursor: grab;
+  transition: all 0.2s;
+}
+
+.palette-item:hover {
+  border-color: #409eff;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.2);
+}
+
+.palette-item:active {
+  cursor: grabbing;
+}
+
+.palette-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+}
+
+.palette-icon.start { background: #67c23a; }
+.palette-icon.end { background: #f56c6c; }
+.palette-icon.action { background: #409eff; }
+.palette-icon.assert { background: #e6a23c; }
+.palette-icon.extract { background: #9b59b6; }
+.palette-icon.condition { background: #f0c020; }
+.palette-icon.subflow { background: #00bcd4; }
+
+.palette-label {
+  font-size: 13px;
+  color: #606266;
+}
+
+/* Node Colors */
+.vue-flow__node {
+  border-radius: 8px;
+}
+
+.node-start {
+  background: #67c23a;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 20px;
+}
+
+.node-end {
+  background: #f56c6c;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 20px;
+}
+
+.node-action {
+  background: #409eff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.node-assert {
+  background: #e6a23c;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.node-extract {
+  background: #9b59b6;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.node-condition {
+  background: #f0c020;
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.node-subflow {
+  background: #00bcd4;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+/* Flow List */
+.flow-list {
+  padding: 20px;
+}
+
+.flow-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.flow-card {
+  background: #fff;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.flow-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.flow-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.flow-card-meta {
+  font-size: 13px;
+  color: #909399;
+  margin-bottom: 12px;
+}
+
+.flow-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.flow-card-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  background: #f0f2f5;
+  color: #606266;
+  border-radius: 4px;
+}
+
+.flow-card-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Test Case Preview */
+.test-case-preview {
+  padding: 20px;
+}
+
+.test-case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.test-case-item {
+  background: #fff;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.test-case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f5f7fa;
+  cursor: pointer;
+}
+
+.test-case-header:hover {
+  background: #ebeef5;
+}
+
+.test-case-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.test-case-steps {
+  padding: 16px;
+}
+
+.test-case-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.test-case-step:last-child {
+  border-bottom: none;
+}
+
+.step-index {
+  width: 24px;
+  height: 24px;
+  background: #409eff;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-type {
+  font-size: 12px;
+  color: #909399;
+  margin-bottom: 4px;
+}
+
+.step-action {
+  font-size: 14px;
+  color: #303133;
+}
+
+/* Property Panel */
+.property-panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e4e7ed;
+}
+
+.property-form-item {
+  margin-bottom: 16px;
+}
+
+.property-form-label {
+  font-size: 13px;
+  color: #606266;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #909399;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-state-text {
+  font-size: 14px;
+}
