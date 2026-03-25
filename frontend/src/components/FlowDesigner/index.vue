@@ -113,7 +113,10 @@ const vueFlowNodes = computed<Node[]>(() => {
       id: node.id,
       type: node.type,
       position: (node as any).position || { x: 100 + (index % 3) * 220, y: 100 + Math.floor(index / 3) * 150 },
-      data,
+      data: {
+        ...data,
+        selected: flowStore.selectedNode?.id === node.id
+      },
       sourcePosition: Position.Bottom,
       targetPosition: Position.Top
     }

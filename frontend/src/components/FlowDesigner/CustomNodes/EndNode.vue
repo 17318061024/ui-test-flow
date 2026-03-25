@@ -5,11 +5,12 @@ defineProps<{
   data: {
     label: string
   }
+  selected?: boolean
 }>()
 </script>
 
 <template>
-  <div class="custom-node end-node">
+  <div class="custom-node end-node" :class="{ selected }">
     <Handle type="target" :position="Position.Top" class="custom-handle" />
     <div class="node-content">
       <span class="node-icon">■</span>
@@ -27,11 +28,19 @@ defineProps<{
   font-weight: 500;
   min-width: 100px;
   text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.2s;
 }
 
 .end-node {
   background: linear-gradient(135deg, #f56c6c 0%, #f78989 100%);
   box-shadow: 0 2px 8px rgba(245, 108, 108, 0.3);
+}
+
+.custom-node.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(245, 108, 108, 0.5), 0 4px 12px rgba(245, 108, 108, 0.4);
+  transform: scale(1.02);
 }
 
 .node-content {

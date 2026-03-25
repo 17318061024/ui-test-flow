@@ -9,11 +9,12 @@ defineProps<{
     waitFor?: string
     prompt?: string
   }
+  selected?: boolean
 }>()
 </script>
 
 <template>
-  <div class="custom-node wait-node">
+  <div class="custom-node wait-node" :class="{ selected }">
     <Handle type="target" :position="Position.Top" class="handle" />
     <div class="node-content">
       <div class="node-header">
@@ -44,6 +45,14 @@ defineProps<{
   min-width: 160px;
   background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
   box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.custom-node.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.5), 0 4px 12px rgba(100, 116, 139, 0.4);
+  transform: scale(1.02);
 }
 
 .node-content {

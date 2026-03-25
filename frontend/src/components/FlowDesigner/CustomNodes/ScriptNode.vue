@@ -6,11 +6,12 @@ defineProps<{
     label: string
     script?: string
   }
+  selected?: boolean
 }>()
 </script>
 
 <template>
-  <div class="custom-node script-node">
+  <div class="custom-node script-node" :class="{ selected }">
     <Handle type="target" :position="Position.Top" class="handle" />
     <div class="node-content">
       <div class="node-header">
@@ -35,6 +36,14 @@ defineProps<{
   min-width: 160px;
   background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
   box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.custom-node.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.5), 0 4px 12px rgba(255, 152, 0, 0.4);
+  transform: scale(1.02);
 }
 
 .node-content {
