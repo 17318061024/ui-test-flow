@@ -15,5 +15,10 @@ public enum NodeType {
     AIQuery,     // AI 驱动的数据提取 (Midscene.js)
     AIAssert,    // AI 驱动的断言验证 (Midscene.js)
     Wait,        // 等待节点
-    Navigate     // 导航节点
+    Navigate,    // 导航节点
+    Loop,        // 循环节点
+    Variable,    // 变量节点
+    Script,      // 脚本节点
+    Log,         // 日志节点
+    Screenshot   // 截图节点
 }

@@ -17,7 +17,7 @@ const router = useRouter()
 const flowStore = useFlowStore()
 
 const vueFlowRef = ref<any>(null)
-const { onConnect, addEdges, addNodes, project, findNode, onNodeDragStop, screenToFlowPosition, getZoom } = useVueFlow()
+const { onConnect, onNodeDragStop } = useVueFlow()
 
 // 处理拖拽放置
 function onDragOver(event: DragEvent) {
@@ -31,24 +31,32 @@ function onDrop(event: DragEvent) {
   const nodeType = event.dataTransfer?.getData('application/vueflow') as NodeType
   if (!nodeType) return
 
-  // 获取画布元素的位置
-  const canvas = event.currentTarget as HTMLElement
-  const rect = canvas.getBoundingClientRect()
+  // 获取拖拽时的偏移（鼠标点击位置相对于节点元素的偏移）
+  const offsetX = parseFloat(event.dataTransfer?.getData('offsetX') || '0')
+  const offsetY = parseFloat(event.dataTransfer?.getData('offsetY') || '0')
 
   // 计算相对于画布的位置
   let position = { x: 0, y: 0 }
 
-  try {
-    // 尝试使用 Vue Flow 的 screenToFlowPosition
-    position = screenToFlowPosition({
-      x: event.clientX,
-      y: event.clientY
+  // 获取画布区域
+  const canvas = event.currentTarget as HTMLElement
+  const rect = canvas.getBoundingClientRect()
+
+  // 尝试使用 Vue Flow 的 screenToFlowPosition
+  const transformFn = vueFlowRef.value?.screenToFlowPosition
+  if (transformFn) {
+    position = transformFn({
+      x: event.clientX - offsetX,
+      y: event.clientY - offsetY
     })
-  } catch (e) {
-    // 如果失败，使用简单的相对位置计算
+  } else {
+    // 简单的相对位置计算（适用于初次加载时）
+    // 获取左侧面板宽度
+    const palette = document.querySelector('.flow-designer-palette') as HTMLElement
+    const paletteWidth = palette?.offsetWidth || 200
     position = {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
+      x: event.clientX - rect.left - offsetX - paletteWidth,
+      y: event.clientY - rect.top - offsetY
     }
   }
 

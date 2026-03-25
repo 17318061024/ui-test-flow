@@ -10,6 +10,11 @@ import SubFlowNode from './SubFlowNode.vue'
 import AIActionNode from './AIActionNode.vue'
 import AIQueryNode from './AIQueryNode.vue'
 import AIAssertNode from './AIAssertNode.vue'
+import LoopNode from './LoopNode.vue'
+import VariableNode from './VariableNode.vue'
+import ScriptNode from './ScriptNode.vue'
+import LogNode from './LogNode.vue'
+import ScreenshotNode from './ScreenshotNode.vue'
 
 export const nodeTypes = {
   Start: StartNode,
@@ -23,7 +28,12 @@ export const nodeTypes = {
   SubFlow: SubFlowNode,
   AIAction: AIActionNode,
   AIQuery: AIQueryNode,
-  AIAssert: AIAssertNode
+  AIAssert: AIAssertNode,
+  Loop: LoopNode,
+  Variable: VariableNode,
+  Script: ScriptNode,
+  Log: LogNode,
+  Screenshot: ScreenshotNode
 }
 
 export {
@@ -38,5 +48,10 @@ export {
   SubFlowNode,
   AIActionNode,
   AIQueryNode,
-  AIAssertNode
+  AIAssertNode,
+  LoopNode,
+  VariableNode,
+  ScriptNode,
+  LogNode,
+  ScreenshotNode
 }

@@ -46,6 +46,26 @@ watch(selectedNode, (node) => {
     if (node.type === 'Wait' && !base.wait) {
       base.wait = { waitType: 'time', timeout: 1, waitFor: '' }
     }
+    // 日志节点
+    if (node.type === 'Log' && !base.log) {
+      base.log = { level: 'log', message: '', variables: [] }
+    }
+    // 循环节点
+    if (node.type === 'Loop' && !base.loop) {
+      base.loop = { loopType: 'times', times: 1 }
+    }
+    // 变量节点
+    if (node.type === 'Variable' && !base.variable) {
+      base.variable = { operation: 'set', name: '', value: '' }
+    }
+    // 脚本节点
+    if (node.type === 'Script' && !base.script) {
+      base.script = { script: '', as: '' }
+    }
+    // 截图节点
+    if (node.type === 'Screenshot' && !base.screenshot) {
+      base.screenshot = { type: 'viewport' }
+    }
 
     localNode.value = base
   } else {
@@ -316,6 +336,10 @@ function getSelectPlaceholder() {
             <el-form-item label="期望值">
               <el-input v-model="localNode.assert.expected" placeholder="期望的值" @blur="saveChanges" />
             </el-form-item>
+            <el-form-item label="变量引用">
+              <el-switch v-model="localNode.assert.isVariable" @change="saveChanges" />
+              <span style="margin-left: 8px; color: #909399; font-size: 12px;">勾选后期望值将作为变量引用</span>
+            </el-form-item>
             <el-form-item label="超时时间">
               <el-input-number v-model="localNode.assert.timeout" :min="0" :step="5" @change="saveChanges" />
               <span style="margin-left: 8px; color: #909399;">秒</span>
@@ -424,6 +448,172 @@ function getSelectPlaceholder() {
           <el-form-item label="元素超时" v-if="localNode.wait.waitType === 'element'">
             <el-input-number v-model="localNode.wait.timeout" :min="1" :step="5" @change="saveChanges" />
             <span style="margin-left: 8px; color: #909399;">秒</span>
+          </el-form-item>
+        </el-form>
+      </template>
+
+      <!-- Log 节点配置 -->
+      <template v-if="selectedNode.type === 'Log' && localNode.log">
+        <div class="property-section-title">日志配置</div>
+
+        <el-form label-width="80px" size="small">
+          <el-form-item label="日志级别">
+            <el-select v-model="localNode.log.level" @change="saveChanges">
+              <el-option label="普通 (log)", value="log" />
+              <el-option label="信息 (info)", value="info" />
+              <el-option label="警告 (warn)", value="warn" />
+              <el-option label="错误 (error)", value="error" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="日志消息">
+            <el-input v-model="localNode.log.message" placeholder="日志内容" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="输出变量">
+            <el-input v-model="localNode.log.variables" placeholder="变量名，多个用逗号分隔" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="日志模板">
+            <el-input v-model="localNode.log.template" placeholder="支持 {{变量名}} 插值" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="时间戳">
+            <el-switch v-model="localNode.log.enableTimestamp" @change="saveChanges" />
+          </el-form-item>
+          <el-form-item label="附带截图">
+            <el-switch v-model="localNode.log.enableScreenshot" @change="saveChanges" />
+          </el-form-item>
+        </el-form>
+      </template>
+
+      <!-- Loop 节点配置 -->
+      <template v-if="selectedNode.type === 'Loop' && localNode.loop">
+        <div class="property-section-title">循环配置</div>
+
+        <el-form label-width="80px" size="small">
+          <el-form-item label="循环类型">
+            <el-select v-model="localNode.loop.loopType" @change="saveChanges">
+              <el-option label="次数循环 (times)", value="times" />
+              <el-option label="条件循环 (while)", value="while" />
+              <el-option label="遍历列表 (forEach)", value="forEach" />
+              <el-option label="选择器循环 (selector)", value="selector" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="循环次数" v-if="localNode.loop.loopType === 'times'">
+            <el-input-number v-model="localNode.loop.times" :min="1" :step="1" @change="saveChanges" />
+          </el-form-item>
+          <el-form-item label="循环变量" v-if="localNode.loop.loopType === 'forEach'">
+            <el-input v-model="localNode.loop.variable" placeholder="循环变量名" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="项列表" v-if="localNode.loop.loopType === 'forEach'">
+            <el-input v-model="localNode.loop.items" placeholder="项列表，多个用逗号分隔" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="选择器" v-if="localNode.loop.loopType === 'selector'">
+            <el-input v-model="localNode.loop.selector" placeholder="CSS 选择器" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="最大迭代">
+            <el-input-number v-model="localNode.loop.maxIterations" :min="1" :step="10" @change="saveChanges" />
+          </el-form-item>
+          <el-form-item label="迭代延迟">
+            <el-input-number v-model="localNode.loop.iterationDelay" :min="0" :step="100" @change="saveChanges" />
+            <span style="margin-left: 8px; color: #909399;">毫秒</span>
+          </el-form-item>
+          <el-form-item label="失败继续">
+            <el-switch v-model="localNode.loop.continueOnError" @change="saveChanges" />
+          </el-form-item>
+        </el-form>
+      </template>
+
+      <!-- Variable 节点配置 -->
+      <template v-if="selectedNode.type === 'Variable' && localNode.variable">
+        <div class="property-section-title">变量配置</div>
+
+        <el-form label-width="80px" size="small">
+          <el-form-item label="操作类型">
+            <el-select v-model="localNode.variable.operation" @change="saveChanges">
+              <el-option label="设置 (set)", value="set" />
+              <el-option label="更新 (update)", value="update" />
+              <el-option label="删除 (delete)", value="delete" />
+              <el-option label="清空 (clear)", value="clear" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="变量名">
+            <el-input v-model="localNode.variable.name" placeholder="变量名称" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="变量值">
+            <el-input v-model="localNode.variable.value" placeholder="变量值" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="表达式">
+            <el-switch v-model="localNode.variable.isExpression" @change="saveChanges" />
+            <span style="margin-left: 8px; color: #909399; font-size: 12px;">勾选后值作为表达式计算</span>
+          </el-form-item>
+          <el-form-item label="运算操作符" v-if="localNode.variable.operation === 'update'">
+            <el-select v-model="localNode.variable.operator" @change="saveChanges">
+              <el-option label="赋值 (=)", value="=" />
+              <el-option label="加 (+)", value="+" />
+              <el-option label="减 (-)", value="-" />
+              <el-option label="乘 (*)", value="*" />
+              <el-option label="除 (/)", value="/" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="默认值">
+            <el-input v-model="localNode.variable.defaultValue" placeholder="变量不存在时的默认值" @blur="saveChanges" />
+          </el-form-item>
+        </el-form>
+      </template>
+
+      <!-- Script 节点配置 -->
+      <template v-if="selectedNode.type === 'Script' && localNode.script">
+        <div class="property-section-title">脚本配置</div>
+
+        <el-form label-width="80px" size="small">
+          <el-form-item label="脚本代码">
+            <el-input v-model="localNode.script.script" type="textarea" :rows="4" placeholder="JavaScript 代码" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="异步执行">
+            <el-switch v-model="localNode.script.async" @change="saveChanges" />
+          </el-form-item>
+          <el-form-item label="输入参数">
+            <el-input v-model="localNode.script.params" placeholder="JSON 格式参数" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="结果变量">
+            <el-input v-model="localNode.script.as" placeholder="保存结果为变量名" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="抛出错误">
+            <el-switch v-model="localNode.script.throwError" @change="saveChanges" />
+          </el-form-item>
+        </el-form>
+      </template>
+
+      <!-- Screenshot 节点配置 -->
+      <template v-if="selectedNode.type === 'Screenshot' && localNode.screenshot">
+        <div class="property-section-title">截图配置</div>
+
+        <el-form label-width="80px" size="small">
+          <el-form-item label="截图类型">
+            <el-select v-model="localNode.screenshot.type" @change="saveChanges">
+              <el-option label="视口截图 (viewport)", value="viewport" />
+              <el-option label="整页截图 (fullPage)", value="fullPage" />
+              <el-option label="元素截图 (element)", value="element" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="目标元素" v-if="localNode.screenshot.type === 'element'">
+            <el-input v-model="localNode.screenshot.target" placeholder="描述目标元素" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="保存路径">
+            <el-input v-model="localNode.screenshot.path" placeholder="保存目录路径" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="文件名">
+            <el-input v-model="localNode.screenshot.filename" placeholder="文件名，支持变量" @blur="saveChanges" />
+          </el-form-item>
+          <el-form-item label="透明背景">
+            <el-switch v-model="localNode.screenshot.omitBackground" @change="saveChanges" />
+          </el-form-item>
+          <el-form-item label="编码方式">
+            <el-select v-model="localNode.screenshot.encoding" @change="saveChanges">
+              <el-option label="二进制 (binary)", value="binary" />
+              <el-option label="Base64 (base64)", value="base64" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="保存变量">
+            <el-input v-model="localNode.screenshot.as" placeholder="保存为 base64 变量" @blur="saveChanges" />
           </el-form-item>
         </el-form>
       </template>

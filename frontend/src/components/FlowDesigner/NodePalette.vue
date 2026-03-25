@@ -34,7 +34,13 @@ const nodeItems: NodeItem[] = [
   { type: 'Extract', label: '提取数据', icon: '📥', category: 'data', description: '从页面提取数据' },
   // 流程逻辑
   { type: 'Condition', label: '条件分支', icon: '🔀', category: 'logic', description: '根据条件分支执行' },
-  { type: 'SubFlow', label: '子流程', icon: '🔄', category: 'logic', description: '调用其他测试流程' }
+  { type: 'SubFlow', label: '子流程', icon: '🔄', category: 'logic', description: '调用其他测试流程' },
+  // 扩展节点
+  { type: 'Loop', label: '循环', icon: '🔁', category: 'logic', description: '循环执行节点组' },
+  { type: 'Variable', label: '变量', icon: '📦', category: 'data', description: '设置、更新、删除变量' },
+  { type: 'Script', label: '脚本', icon: '⚡', category: 'logic', description: '执行自定义 JavaScript' },
+  { type: 'Log', label: '日志', icon: '📝', category: 'debug', description: '输出日志信息' },
+  { type: 'Screenshot', label: '截图', icon: '📸', category: 'debug', description: '截取页面或元素' }
 ]
 
 /**
@@ -44,6 +50,13 @@ function onDragStart(event: DragEvent, nodeType: NodeType) {
   if (event.dataTransfer) {
     event.dataTransfer.setData('application/vueflow', nodeType)
     event.dataTransfer.effectAllowed = 'move'
+    // 记录拖拽开始时鼠标相对于目标元素的偏移
+    const target = event.target as HTMLElement
+    const rect = target.getBoundingClientRect()
+    const offsetX = event.clientX - rect.left
+    const offsetY = event.clientY - rect.top
+    event.dataTransfer.setData('offsetX', String(offsetX))
+    event.dataTransfer.setData('offsetY', String(offsetY))
   }
 }
 
@@ -54,6 +67,7 @@ const actionNodes = computed(() => nodeItems.filter(n => n.category === 'action'
 const verifyNodes = computed(() => nodeItems.filter(n => n.category === 'verify'))
 const dataNodes = computed(() => nodeItems.filter(n => n.category === 'data'))
 const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
+const debugNodes = computed(() => nodeItems.filter(n => n.category === 'debug'))
 </script>
 
 <template>
@@ -68,7 +82,7 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
       :key="item.type"
       class="palette-item"
       draggable="true"
-      @dragstart="(e) => onDragStart(e, item.type)"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
     >
       <div :class="['palette-icon', item.type.toLowerCase()]">
         {{ item.icon }}
@@ -86,7 +100,7 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
       :key="item.type"
       class="palette-item"
       draggable="true"
-      @dragstart="(e) => onDragStart(e, item.type)"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
     >
       <div :class="['palette-icon', item.type.toLowerCase()]">
         {{ item.icon }}
@@ -104,7 +118,7 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
       :key="item.type"
       class="palette-item"
       draggable="true"
-      @dragstart="(e) => onDragStart(e, item.type)"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
     >
       <div :class="['palette-icon', item.type.toLowerCase()]">
         {{ item.icon }}
@@ -122,7 +136,7 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
       :key="item.type"
       class="palette-item"
       draggable="true"
-      @dragstart="(e) => onDragStart(e, item.type)"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
     >
       <div :class="['palette-icon', item.type.toLowerCase()]">
         {{ item.icon }}
@@ -140,7 +154,7 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
       :key="item.type"
       class="palette-item"
       draggable="true"
-      @dragstart="(e) => onDragStart(e, item.type)"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
     >
       <div :class="['palette-icon', item.type.toLowerCase()]">
         {{ item.icon }}
@@ -158,7 +172,25 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
       :key="item.type"
       class="palette-item"
       draggable="true"
-      @dragstart="(e) => onDragStart(e, item.type)"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
+    >
+      <div :class="['palette-icon', item.type.toLowerCase()]">
+        {{ item.icon }}
+      </div>
+      <div class="palette-item-content">
+        <span class="palette-label">{{ item.label }}</span>
+        <span class="palette-desc">{{ item.description }}</span>
+      </div>
+    </div>
+
+    <!-- 调试 -->
+    <div class="palette-section-title">调试</div>
+    <div
+      v-for="item in debugNodes"
+      :key="item.type"
+      class="palette-item"
+      draggable="true"
+      @dragstart="(e: DragEvent) => onDragStart(e, item.type)"
     >
       <div :class="['palette-icon', item.type.toLowerCase()]">
         {{ item.icon }}
@@ -257,6 +289,11 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
 .palette-icon.extract { background: #f3e5f5; }
 .palette-icon.condition { background: #fff3e0; }
 .palette-icon.subflow { background: #e0f7fa; }
+.palette-icon.loop { background: #e8f5e9; }
+.palette-icon.variable { background: #fce4ec; }
+.palette-icon.script { background: #fff3e0; }
+.palette-icon.log { background: #e3f2fd; }
+.palette-icon.screenshot { background: #f3e5f5; }
 
 .palette-item-content {
   flex: 1;
@@ -324,6 +361,11 @@ const logicNodes = computed(() => nodeItems.filter(n => n.category === 'logic'))
 .node-badge.extract { background: #9b59b6; }
 .node-badge.condition { background: #f0c020; color: #333; }
 .node-badge.subflow { background: #00bcd4; }
+.node-badge.loop { background: #67c23a; }
+.node-badge.variable { background: #e91e63; }
+.node-badge.script { background: #ff9800; }
+.node-badge.log { background: #2196f3; }
+.node-badge.screenshot { background: #9c27b0; }
 
 .node-name {
   flex: 1;
