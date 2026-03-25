@@ -167,42 +167,62 @@ public class TestCaseGenerator {
     }
 
     /**
-     * 生成用例名称
+     * 生成用例名称 - 根据路径唯一性生成区分的名称
      */
     private String generateCaseName(List<FlowNode> path) {
         List<String> parts = new ArrayList<>();
-        String lastLabel = "";
 
+        // 收集关键节点信息用于区分不同路径
         for (FlowNode node : path) {
             if (node.getType() == NodeType.Start || node.getType() == NodeType.End) continue;
 
-            // 跳过条件分支标记节点（由系统生成）
+            // 处理条件分支标记节点（由系统生成）
             if (node.getId().contains("_branch")) {
                 String value = node.getAction() != null ? node.getAction().getValue() : "";
                 if (value != null && !value.isEmpty()) {
-                    parts.add("分支" + value);
+                    // 截取有意义的分支描述
+                    if (value.length() > 10) {
+                        parts.add(value.substring(0, 8));
+                    } else {
+                        parts.add(value);
+                    }
                 }
                 continue;
             }
 
             if (node.getType() == NodeType.Action) {
                 String label = node.getLabel();
-                // 避免重复标签
-                if (label != null && !label.equals(lastLabel)) {
-                    lastLabel = label;
-                    parts.add(label);
+                if (label != null && !label.isEmpty()) {
+                    // 截取前几个字
+                    parts.add(label.length() > 6 ? label.substring(0, 6) : label);
                 }
             } else if (node.getType() == NodeType.Assert) {
-                parts.add("验证" + node.getLabel());
+                parts.add("验证");
+            } else if (node.getType() == NodeType.Condition) {
+                // 条件节点使用 prompt 或标签
+                if (node.getCondition() != null) {
+                    String condText = node.getCondition().getPrompt();
+                    if (condText == null || condText.isEmpty()) {
+                        condText = node.getLabel();
+                    }
+                    if (condText != null && !condText.isEmpty()) {
+                        parts.add(condText.length() > 6 ? condText.substring(0, 6) : condText);
+                    }
+                }
             }
-            // 条件节点不直接显示在名称中，分支会处理
         }
 
-        String name = String.join("_", parts.subList(0, Math.min(4, parts.size())));
+        // 如果没有有效部分，使用路径长度
+        if (parts.isEmpty()) {
+            return "测试用例_" + path.size();
+        }
+
+        // 组合名称
+        String name = String.join("_", parts);
         if (name.length() > 50) {
             name = name.substring(0, 47) + "...";
         }
-        return name.isEmpty() ? "测试用例_" + path.size() : name;
+        return name;
     }
 
     /**
@@ -253,8 +273,18 @@ public class TestCaseGenerator {
                 step.setMethod(ActionMethod.wait);
                 step.setTarget("条件判断");
                 if (node.getCondition() != null) {
-                    step.setValue(node.getCondition().getVariable() + " " +
-                            node.getCondition().getOperator() + " " + node.getCondition().getValue());
+                    ConditionConfig cond = node.getCondition();
+                    // 优先使用 prompt，其次使用结构化配置
+                    if (cond.getPrompt() != null && !cond.getPrompt().isEmpty()) {
+                        step.setValue(cond.getPrompt());
+                    } else if (cond.getVariable() != null) {
+                        String val = cond.getVariable();
+                        if (cond.getOperator() != null) val += " " + cond.getOperator();
+                        if (cond.getValue() != null) val += " " + cond.getValue();
+                        step.setValue(val);
+                    } else {
+                        step.setValue(node.getLabel());
+                    }
                 } else {
                     step.setValue(node.getLabel());
                 }

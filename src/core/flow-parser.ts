@@ -13,7 +13,7 @@ import {
 } from './types.js';
 
 // 节点类型验证
-const NODE_TYPES: NodeType[] = ['Start', 'End', 'Action', 'Assert', 'Extract', 'Condition', 'SubFlow'];
+const NODE_TYPES: NodeType[] = ['Start', 'End', 'Action', 'Assert', 'Extract', 'Condition', 'SubFlow', 'Wait', 'Navigate'];
 const ACTION_METHODS = ['click', 'input', 'select', 'hover', 'scroll', 'wait', 'screenshot'];
 const ASSERT_TYPES = ['text', 'visible', 'hidden', 'enabled', 'contains'];
 

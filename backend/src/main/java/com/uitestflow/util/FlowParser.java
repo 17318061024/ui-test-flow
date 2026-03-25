@@ -1,5 +1,6 @@
 package com.uitestflow.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
@@ -37,18 +38,22 @@ public class FlowParser {
     private final ObjectMapper yamlObjectMapper;
 
     public FlowParser() {
+        // 配置 JSON 解析器忽略未知字段
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         // 配置 YAML 工厂
         YAMLFactory yamlFactory = YAMLFactory.builder()
                 .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                 .build();
         yamlObjectMapper = new ObjectMapper(yamlFactory);
+        yamlObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /**
      * 加载流程图文件
      */
     public TestFlow loadFlow(String filePath) throws IOException {
-        String content = Files.readString(Path.of(filePath));
+        String content = new String(Files.readAllBytes(Paths.get(filePath)));
 
         TestFlow flow;
         if (filePath.toLowerCase().endsWith(".yaml") || filePath.toLowerCase().endsWith(".yml")) {
@@ -109,7 +114,7 @@ public class FlowParser {
             throw new IOException("不支持的文件格式: " + filePath);
         }
 
-        Files.writeString(Path.of(filePath), content);
+        Files.write(Paths.get(filePath), content.getBytes());
     }
 
     /**

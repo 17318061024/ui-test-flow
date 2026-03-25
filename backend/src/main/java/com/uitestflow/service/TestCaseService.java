@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.uitestflow.model.TestCase;
 import com.uitestflow.model.TestFlow;
+import com.uitestflow.model.TestStep;
 import com.uitestflow.util.FlowParser;
 import com.uitestflow.util.TestCaseGenerator;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,7 +77,7 @@ public class TestCaseService {
         }
 
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(testCases);
-        Files.writeString(Paths.get(outputPath), json);
+        Files.write(Paths.get(outputPath), json.getBytes());
 
         return testCases;
     }
@@ -92,7 +93,7 @@ public class TestCaseService {
             return Collections.emptyList();
         }
 
-        String content = Files.readString(Paths.get(outputPath));
+        String content = String.join("", Files.readAllLines(Paths.get(outputPath)));
         return Arrays.asList(objectMapper.readValue(content, TestCase[].class));
     }
 
@@ -142,21 +143,18 @@ public class TestCaseService {
             sb.append("async function test").append(tc.getId().replace("TC-", "")).append("(page) {\n");
 
             if (tc.getSteps() != null) {
-                for (var step : tc.getSteps()) {
+                for (TestStep step : tc.getSteps()) {
                     if ("action".equals(step.getType())) {
                         if (step.getMethod() != null) {
-                            switch (step.getMethod()) {
-                                case input:
-                                    sb.append("  await ai('在").append(step.getTarget()).append("输入 ").append(step.getValue()).append("');\n");
-                                    break;
-                                case click:
-                                    sb.append("  await ai('点击").append(step.getTarget()).append("');\n");
-                                    break;
-                                case wait:
-                                    sb.append("  await page.waitForTimeout(").append(step.getTimeout() != null ? step.getTimeout() : 1000).append(");\n");
-                                    break;
-                                default:
-                                    sb.append("  await ai('").append(step.getMethod().name()).append(" ").append(step.getTarget()).append("');\n");
+                            String method = step.getMethod().name().toLowerCase();
+                            if ("input".equals(method)) {
+                                sb.append("  await ai('在").append(step.getTarget()).append("输入 ").append(step.getValue()).append("');\n");
+                            } else if ("click".equals(method)) {
+                                sb.append("  await ai('点击").append(step.getTarget()).append("');\n");
+                            } else if ("wait".equals(method)) {
+                                sb.append("  await page.waitForTimeout(").append(step.getTimeout() != null ? step.getTimeout() : 1000).append(");\n");
+                            } else {
+                                sb.append("  await ai('").append(step.getMethod().name()).append(" ").append(step.getTarget()).append("');\n");
                             }
                         }
                     } else if ("assert".equals(step.getType())) {

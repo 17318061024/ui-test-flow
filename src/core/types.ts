@@ -11,7 +11,9 @@ export type NodeType =
   | 'Assert'    // 断言验证
   | 'Extract'   // 数据提取
   | 'Condition'  // 条件分支
-  | 'SubFlow';   // 子流程
+  | 'SubFlow'   // 子流程
+  | 'Wait'      // 等待节点
+  | 'Navigate'; // 导航节点
 
 // 操作方法
 export type ActionMethod =

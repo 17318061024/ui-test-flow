@@ -37,18 +37,31 @@ export function generateTestCases(flow: TestFlow, allFlows?: Map<string, TestFlo
 
 /**
  * 查找所有从起点到终点的路径
+ * @param maxPathLength 限制最大路径长度，防止无限递归
  */
 function findAllPaths(
   flow: TestFlow,
   startId: string,
   allFlows?: Map<string, TestFlow>,
-  visitedSubFlows: Set<string> = new Set()
+  visitedSubFlows: Set<string> = new Set(),
+  maxPathLength: number = 100
 ): FlowNode[][] {
   const paths: FlowNode[][] = [];
 
-  function dfs(currentNodeId: string, currentPath: FlowNode[]) {
+  function dfs(currentNodeId: string, currentPath: FlowNode[], visitedInPath: Set<string>) {
     const node = getNodeById(flow, currentNodeId);
     if (!node) return;
+
+    // 循环检测：如果节点已在当前路径中，说明形成循环，停止递归
+    if (visitedInPath.has(currentNodeId)) {
+      return;
+    }
+
+    // 路径长度限制：防止无限增长
+    if (currentPath.length >= maxPathLength) {
+      console.warn(`路径长度超过限制 ${maxPathLength}，截断处理`);
+      return;
+    }
 
     // 处理子流程展开
     if (node.type === 'SubFlow') {
@@ -57,6 +70,7 @@ function findAllPaths(
       // 如果 flowId 为空，视为普通节点处理：添加到路径并继续
       if (!subFlowId || subFlowId.trim() === '') {
         currentPath.push(node);
+        visitedInPath.add(currentNodeId);
       } else if (!visitedSubFlows.has(subFlowId) && allFlows) {
         // 有有效的 flowId，展开子流程
         const subFlow = allFlows.get(subFlowId);
@@ -64,9 +78,9 @@ function findAllPaths(
           visitedSubFlows.add(subFlowId);
           const subStart = subFlow.nodes.find(n => n.type === 'Start');
           if (subStart) {
-            const subPaths = findAllPaths(subFlow, subStart.id, allFlows, visitedSubFlows);
+            const subPaths = findAllPaths(subFlow, subStart.id, allFlows, visitedSubFlows, maxPathLength);
             for (const subPath of subPaths) {
-              dfs(subPath[subPath.length - 1].id, [...currentPath, node, ...subPath]);
+              dfs(subPath[subPath.length - 1].id, [...currentPath, node, ...subPath], new Set(visitedInPath));
             }
             visitedSubFlows.delete(subFlowId);
             return;
@@ -75,10 +89,9 @@ function findAllPaths(
       }
     }
 
-    // 只有未被添加到路径的节点才添加
-    if (!currentPath.find(n => n.id === node.id)) {
-      currentPath.push(node);
-    }
+    // 添加节点到路径
+    currentPath.push(node);
+    visitedInPath.add(currentNodeId);
 
     if (node.type === 'End') {
       paths.push([...currentPath]);
@@ -102,19 +115,19 @@ function findAllPaths(
             value: branchLabel
           }
         };
-        dfs(edge.target, [...currentPath, branchNode]);
+        dfs(edge.target, [...currentPath, branchNode], new Set(visitedInPath));
       }
     } else {
       // 处理所有出边（非条件分支）
       for (const edge of edges) {
-        dfs(edge.target, [...currentPath]);
+        dfs(edge.target, [...currentPath], new Set(visitedInPath));
       }
     }
   }
 
   const startNode = getNodeById(flow, startId);
   if (startNode) {
-    dfs(startId, []);
+    dfs(startId, [], new Set());
   }
 
   return paths;

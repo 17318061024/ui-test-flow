@@ -154,7 +154,7 @@ onMounted(() => {
           <div class="case-info">
             <span class="expand-icon">{{ expandedCases.has(testCase.id) ? '▼' : '▶' }}</span>
             <span class="case-id">{{ testCase.id }}</span>
-            <span class="case-name">{{ testCase.name }}</span>
+            <span class="case-name" :title="testCase.name">{{ testCase.name }}</span>
           </div>
           <div class="case-meta">
             <span class="case-steps-count">{{ testCase.steps?.length || 0 }} 步</span>

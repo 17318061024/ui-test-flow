@@ -152,7 +152,10 @@
         "y": 1100
       },
       "condition": {
-        "prompt": "检查提取的商品价格是否为空"
+        "variable": null,
+        "operator": "notEmpty",
+        "value": null,
+        "prompt": "检查价格变量不为空"
       }
     },
     {
@@ -257,7 +260,10 @@
         "y": 1940
       },
       "condition": {
-        "prompt": "检查商品是否有库存"
+        "variable": "stockStatus",
+        "operator": "==",
+        "value": "有货",
+        "prompt": "检查库存状态是否为有货"
       }
     },
     {
@@ -362,7 +368,10 @@
         "y": 2780
       },
       "condition": {
-        "prompt": "比较第一个商品和第二个商品的价格"
+        "variable": "price1",
+        "operator": "<=",
+        "value": "price2",
+        "prompt": "比较两个商品价格"
       }
     },
     {

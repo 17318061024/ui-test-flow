@@ -132,7 +132,7 @@ onActivated(async () => {
         :key="flow.id"
         class="flow-card"
       >
-        <div class="flow-card-title">{{ flow.name }}</div>
+        <div class="flow-card-title" :title="flow.name">{{ flow.name }}</div>
         <div class="flow-card-meta">
           <span>版本: v{{ flow.version }}</span>
           <span>•</span>
