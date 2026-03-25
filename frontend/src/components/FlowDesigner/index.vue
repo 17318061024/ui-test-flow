@@ -109,6 +109,21 @@ const vueFlowNodes = computed<Node[]>(() => {
       data.mapping = node.subFlow.mapping
     }
 
+    // 根据节点类型设置连接位置
+    const getNodePositions = (nodeType: string) => {
+      switch (nodeType) {
+        case 'Condition':
+          return { targetPosition: Position.Top, sourcePosition: undefined } // 使用节点上的 Handle 位置
+        case 'Start':
+        case 'End':
+          return { targetPosition: Position.Top, sourcePosition: Position.Bottom }
+        default:
+          return { targetPosition: Position.Top, sourcePosition: Position.Bottom }
+      }
+    }
+
+    const positions = getNodePositions(node.type)
+
     return {
       id: node.id,
       type: node.type,
@@ -117,8 +132,8 @@ const vueFlowNodes = computed<Node[]>(() => {
         ...data,
         selected: flowStore.selectedNode?.id === node.id
       },
-      sourcePosition: Position.Bottom,
-      targetPosition: Position.Top
+      sourcePosition: positions.sourcePosition,
+      targetPosition: positions.targetPosition
     }
   })
 })

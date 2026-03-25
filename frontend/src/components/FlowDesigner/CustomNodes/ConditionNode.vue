@@ -95,9 +95,13 @@ defineProps<{
 
 .handle-left {
   left: -4px !important;
+  top: 50% !important;
+  transform: translateY(-50%);
 }
 
 .handle-right {
   right: -4px !important;
+  top: 50% !important;
+  transform: translateY(-50%);
 }
 </style>
