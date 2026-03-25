@@ -482,6 +482,7 @@ export interface FlowEdge {
   target: string
   label?: string
   condition?: string
+  sourceHandle?: string  // 连接点位置（left/right/top/bottom）
 }
 
 // 流程图定义

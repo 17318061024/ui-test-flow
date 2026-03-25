@@ -148,6 +148,7 @@ const vueFlowEdges = computed<Edge[]>(() => {
       source: edge.source!,
       target: edge.target!,
       label: edge.label,
+      sourceHandle: edge.sourceHandle,  // 传递连接点位置
       type: 'smoothstep',
       animated: true,
       markerEnd: {
@@ -162,7 +163,8 @@ const vueFlowEdges = computed<Edge[]>(() => {
 // 监听连接事件
 onConnect((params) => {
   if (flowStore.currentFlow) {
-    flowStore.addEdge(params.source, params.target)
+    // 保存连接的位置信息（sourceHandle 是连接点位置，如 left、right、top、bottom）
+    flowStore.addEdge(params.source, params.target, undefined, params.sourceHandle)
   }
 })
 

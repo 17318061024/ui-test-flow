@@ -241,7 +241,7 @@ export const useFlowStore = defineStore('flow', () => {
   }
 
   // 添加边
-  function addEdge(source: string, target: string, label?: string) {
+  function addEdge(source: string, target: string, label?: string, sourceHandle?: string) {
     if (!currentFlow.value) return
 
     // 检查是否已存在相同边
@@ -254,7 +254,8 @@ export const useFlowStore = defineStore('flow', () => {
       id: uuidv4(),
       source,
       target,
-      label
+      label,
+      sourceHandle  // 保存连接点位置信息
     }
 
     // 添加边并重新赋值数组以触发响应式更新
