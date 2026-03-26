@@ -5,6 +5,7 @@ frontend/node_modules/
 # Build outputs
 dist/
 frontend/dist/
+backend/target/
 
 # IDE
 .idea/
@@ -29,3 +30,6 @@ npm-debug.log*
 
 # Output
 output/
+
+# Flow data
+flows/
