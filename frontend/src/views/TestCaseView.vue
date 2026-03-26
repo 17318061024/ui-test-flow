@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as api from '@/api/flows'
 import type { TestCase, TestFlow } from '@/types/flow'
@@ -17,6 +17,11 @@ const flowId = computed(() => route.query.flowId as string)
 
 // 加载测试用例
 async function loadTestCases() {
+  // 清空旧数据，避免显示缓存
+  testCases.value = []
+  flow.value = null
+  expandedCases.value.clear()
+
   if (!flowId.value) {
     // 加载所有用例
     testCases.value = await api.getTestCases()
@@ -35,6 +40,11 @@ async function loadTestCases() {
     isLoading.value = false
   }
 }
+
+// 监听路由参数变化，重新加载数据
+watch(() => route.query.flowId, () => {
+  loadTestCases()
+})
 
 // 切换用例展开状态
 function toggleCase(caseId: string) {

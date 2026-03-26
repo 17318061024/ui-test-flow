@@ -16,5 +16,5 @@ public enum ActionMethod {
     screenshot,      // 截图
     refresh,         // 刷新页面
     switchFrame,     // 切换iframe
-    goto             // 导航到URL
+    goTo             // 导航到URL
 }

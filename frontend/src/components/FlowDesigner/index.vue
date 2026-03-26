@@ -141,6 +141,14 @@ const vueFlowNodes = computed<Node[]>(() => {
 const vueFlowEdges = computed<Edge[]>(() => {
   if (!flowStore.currentFlow) return []
 
+  // 根据 sourceHandle 获取对应的 sourcePosition
+  const getSourcePosition = (handle: string | undefined): string | undefined => {
+    if (!handle) return undefined
+    // 将 handle 名称转换为位置 (left -> Left, right -> Right, top -> Top, bottom -> Bottom)
+    const pos = handle.charAt(0).toUpperCase() + handle.slice(1)
+    return pos as 'Left' | 'Right' | 'Top' | 'Bottom'
+  }
+
   return flowStore.currentFlow.edges
     .filter(edge => edge.source && edge.target) // 过滤无效边
     .map(edge => ({
@@ -148,7 +156,8 @@ const vueFlowEdges = computed<Edge[]>(() => {
       source: edge.source!,
       target: edge.target!,
       label: edge.label,
-      sourceHandle: edge.sourceHandle,  // 传递连接点位置
+      sourceHandle: edge.sourceHandle,  // 传递连接点ID
+      sourcePosition: getSourcePosition(edge.sourceHandle),  // 根据 sourceHandle 设置 sourcePosition
       type: 'smoothstep',
       animated: true,
       markerEnd: {
@@ -162,9 +171,11 @@ const vueFlowEdges = computed<Edge[]>(() => {
 
 // 监听连接事件
 onConnect((params) => {
+  console.log('onConnect params:', params)
   if (flowStore.currentFlow) {
     // 保存连接的位置信息（sourceHandle 是连接点位置，如 left、right、top、bottom）
-    flowStore.addEdge(params.source, params.target, undefined, params.sourceHandle)
+    flowStore.addEdge(params.source, params.target, undefined, params.sourceHandle ?? undefined)
+    console.log('edges after add:', JSON.stringify(flowStore.currentFlow.edges, null, 2))
   }
 })
 

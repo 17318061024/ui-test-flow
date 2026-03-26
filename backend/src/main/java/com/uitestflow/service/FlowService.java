@@ -2,6 +2,7 @@ package com.uitestflow.service;
 
 import com.uitestflow.dto.FlowMeta;
 import com.uitestflow.dto.ValidationResult;
+import com.uitestflow.model.FlowEdge;
 import com.uitestflow.model.TestFlow;
 import com.uitestflow.util.FlowParser;
 import org.springframework.beans.factory.annotation.Value;

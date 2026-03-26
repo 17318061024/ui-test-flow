@@ -28,13 +28,18 @@ declare module 'vue' {
     EndNode: typeof import('./src/components/FlowDesigner/CustomNodes/EndNode.vue')['default']
     ExtractNode: typeof import('./src/components/FlowDesigner/CustomNodes/ExtractNode.vue')['default']
     FlowDesigner: typeof import('./src/components/FlowDesigner/index.vue')['default']
+    LogNode: typeof import('./src/components/FlowDesigner/CustomNodes/LogNode.vue')['default']
+    LoopNode: typeof import('./src/components/FlowDesigner/CustomNodes/LoopNode.vue')['default']
     NavigateNode: typeof import('./src/components/FlowDesigner/CustomNodes/NavigateNode.vue')['default']
     NodePalette: typeof import('./src/components/FlowDesigner/NodePalette.vue')['default']
     PropertyPanel: typeof import('./src/components/FlowDesigner/PropertyPanel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScreenshotNode: typeof import('./src/components/FlowDesigner/CustomNodes/ScreenshotNode.vue')['default']
+    ScriptNode: typeof import('./src/components/FlowDesigner/CustomNodes/ScriptNode.vue')['default']
     StartNode: typeof import('./src/components/FlowDesigner/CustomNodes/StartNode.vue')['default']
     SubFlowNode: typeof import('./src/components/FlowDesigner/CustomNodes/SubFlowNode.vue')['default']
+    VariableNode: typeof import('./src/components/FlowDesigner/CustomNodes/VariableNode.vue')['default']
     WaitNode: typeof import('./src/components/FlowDesigner/CustomNodes/WaitNode.vue')['default']
   }
 }

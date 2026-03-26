@@ -90,6 +90,8 @@ export const useFlowStore = defineStore('flow', () => {
       const now = new Date().toISOString()
       currentFlow.value.updatedAt = now
 
+      console.log('Saving flow with edges:', JSON.stringify(currentFlow.value.edges, null, 2))
+
       // 检查流程是否已存在（优先使用 flows 列表，否则通过 API 检查）
       let existing = flows.value.find(f => f.id === currentFlow.value?.id)
 
