@@ -14,4 +14,5 @@ public class FlowEdge {
     private String target;
     private String label;      // 显示标签
     private String condition;  // 条件（仅Condition节点使用）
+    private String sourceHandle;  // 连接点位置（left/right/top/bottom）
 }
