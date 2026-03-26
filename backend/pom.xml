@@ -56,6 +56,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- OkHttp for HTTP requests -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -73,6 +80,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerVersion>1.8</compilerVersion>
+                    <fork>true</fork>
+                    <executable>/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/bin/javac</executable>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

@@ -104,3 +104,17 @@ export async function exportTestCases(flowId: string, format: 'json' | 'yaml' | 
   // 导出脚本时返回文本，其他格式返回字符串
   return response.text()
 }
+
+// AI 生成流程图
+export interface AIGenerateRequest {
+  images: string[]  // 图片 Base64 或 URL
+  requirement: string  // 需求描述
+  appName?: string  // 应用名称
+}
+
+export async function aiGenerateFlow(req: AIGenerateRequest): Promise<TestFlow> {
+  return request<TestFlow>('/flows/ai-generate', {
+    method: 'POST',
+    body: JSON.stringify(req)
+  })
+}

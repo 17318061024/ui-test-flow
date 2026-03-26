@@ -1,8 +1,10 @@
 package com.uitestflow.controller;
 
+import com.uitestflow.dto.AIGenerateRequest;
 import com.uitestflow.dto.FlowMeta;
 import com.uitestflow.model.TestCase;
 import com.uitestflow.model.TestFlow;
+import com.uitestflow.service.AIFlowService;
 import com.uitestflow.service.FlowService;
 import com.uitestflow.service.TestCaseService;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +26,12 @@ public class FlowController {
 
     private final FlowService flowService;
     private final TestCaseService testCaseService;
+    private final AIFlowService aiFlowService;
 
-    public FlowController(FlowService flowService, TestCaseService testCaseService) {
+    public FlowController(FlowService flowService, TestCaseService testCaseService, AIFlowService aiFlowService) {
         this.flowService = flowService;
         this.testCaseService = testCaseService;
+        this.aiFlowService = aiFlowService;
     }
 
     /**
@@ -153,6 +157,25 @@ public class FlowController {
             Map<String, Object> error = new HashMap<>();
             error.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    /**
+     * AI 生成流程图
+     */
+    @PostMapping("/flows/ai-generate")
+    public ResponseEntity<?> generateFlowFromAI(@RequestBody AIGenerateRequest request) {
+        try {
+            TestFlow flow = aiFlowService.generateFlow(request);
+            return ResponseEntity.ok(flow);
+        } catch (IOException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "AI 生成流程图失败: " + e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "AI 生成流程图失败: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
         }
     }
 

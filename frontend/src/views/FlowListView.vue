@@ -3,12 +3,14 @@ import { ref, onMounted, onActivated, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFlowStore } from '@/stores/flow'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import type { FlowMeta } from '@/types/flow'
+import type { FlowMeta, TestFlow } from '@/types/flow'
+import AIImporter from '@/components/AIImporter.vue'
 
 const router = useRouter()
 const flowStore = useFlowStore()
 
 const searchText = ref('')
+const aiImporterVisible = ref(false)
 
 // 筛选后的流程列表
 const filteredFlows = computed(() => {
@@ -61,6 +63,12 @@ async function handleDuplicate(flow: FlowMeta) {
   await flowStore.duplicateFlow(flow.id)
 }
 
+// AI 生成成功
+function handleAIGenerateSuccess(flow: TestFlow) {
+  // 导航到流程设计器进行编辑
+  router.push(`/designer/${flow.id}`)
+}
+
 // 导出流程
 function exportFlow(flow: FlowMeta) {
   // TODO: 实现导出功能
@@ -109,6 +117,9 @@ onActivated(async () => {
         </el-input>
         <el-button type="primary" @click="createNewFlow">
           + 创建流程
+        </el-button>
+        <el-button type="success" @click="aiImporterVisible = true">
+          🤖 AI 导入
         </el-button>
       </div>
     </div>
@@ -170,6 +181,12 @@ onActivated(async () => {
       </div>
     </div>
   </div>
+
+  <!-- AI 导入弹窗 -->
+  <AIImporter
+    v-model:visible="aiImporterVisible"
+    @success="handleAIGenerateSuccess"
+  />
 </template>
 
 <style scoped>
