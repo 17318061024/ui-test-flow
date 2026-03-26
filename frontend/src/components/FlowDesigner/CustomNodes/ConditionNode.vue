@@ -25,8 +25,10 @@ defineProps<{
         {{ data.variable }} {{ data.operator }} {{ data.value }}
       </div>
     </div>
-    <Handle type="source" :position="Position.Left" class="handle handle-left" />
-    <Handle type="source" :position="Position.Right" class="handle handle-right" />
+    <!-- 左边连接点 - 条件为真 -->
+    <Handle id="left" type="source" :position="Position.Left" class="handle handle-left" />
+    <!-- 右边连接点 - 条件为假 -->
+    <Handle id="right" type="source" :position="Position.Right" class="handle handle-right" />
   </div>
 </template>
 
